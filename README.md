@@ -2,11 +2,17 @@
 
 Biddify
 │
+
 ├── Biddify.Biddify           => Controller, Pages, Program.cs
+
 ├── Biddify.Service           => Interface + Service class to handle business operations
+
 ├── Biddify.Repository        => Interface + Repository class access data
+
 ├── Biddify.DataAccess        => DbContext, Entity, Migration
+
 ├── Biddify.Domain            => model (resquest, response), enum, constant
+
 └── Biddify.Common            => class helper, util, mapping, exception
 
 2. Database Diagram.
