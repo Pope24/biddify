@@ -1,0 +1,43 @@
+﻿@page
+@model Biddify.Pages.Authen.LoginModel;
+@{
+    ViewData["Title"] = "Login";
+    Layout = "~/Pages/Shared/_AuthenLayout.cshtml";
+}
+<div class="container">
+    <div>
+        <h2>Login</h2>
+        <form asp-action="Login" method="post">
+            <div class="mb-3">
+                <label asp-for="LoginViewModel.Email" class="form-label"></label>
+                <input asp-for="LoginViewModel.Email" class="form-control" />
+                <span asp-validation-for="LoginViewModel.Email" class="text-danger"></span>
+            </div>
+            <div class="m-3">
+                <label asp-for="LoginViewModel.Password" class="form-label"></label>
+                <input asp-for="LoginViewModel.Password" class="form-control" />
+                <span asp-validation-for="LoginViewModel.Password" class="text-danger"></span>
+            </div>
+            <div class="float-end">
+                <a asp-page="/Authen/VerifyEmail" class="text-decoration-none">
+                    Forgot password ?
+                </a>
+            </div>
+            <div asp-validation-summary="ModelOnly" class="text-danger text-decoration-none"></div>
+            <div class="form-check mb-3">
+                <label class="form-check-label">
+                    <input asp-for="LoginViewModel.RememberMe" class="form-check-input" />
+                    @Html.DisplayNameFor(l => l.LoginViewModel.RememberMe)
+                </label>
+            </div>
+            <input type="submit" value="Login" class="btn btn-success w-100 p-2" />
+            <a asp-page="/Authen/Register" class="text-decoration-none mt-3">Do you have an account ?</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial.cshtml");
+    }
+}
