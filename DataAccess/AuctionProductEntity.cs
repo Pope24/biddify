@@ -10,12 +10,14 @@ namespace DataAccess
 {
     public class AuctionProductEntity
     {
-        public Guid Id { get; set; }
-        public Guid SellerId { get; set; }
+        public string Id { get; set; }
+        public string SellerId { get; set; }
         public UserEntity Seller { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
+        public ECategoryProduct CategoryProduct { get; set; }
         public decimal StartPrice { get; set; }
+        public decimal MinBidPrice { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
         public EAuctionStatus Status { get; set; } = EAuctionStatus.PendingApproval;

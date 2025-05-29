@@ -8,12 +8,12 @@ namespace DataAccess
 {
     public class CommentEntity
     {
-        public Guid Id { get; set; }
+        public string Id { get; set; }
 
-        public Guid AuctionProductId { get; set; }
+        public string AuctionProductId { get; set; }
         public AuctionProductEntity AuctionProduct { get; set; }
 
-        public Guid UserId { get; set; }
+        public string UserId { get; set; }
         public UserEntity User { get; set; }
 
         public string Content { get; set; }

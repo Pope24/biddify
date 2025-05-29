@@ -1,5 +1,8 @@
 using DataAccess;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Service;
+using Service.Impl;
 using System;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,6 +11,22 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<BiddifyDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddIdentity<UserEntity, IdentityRole>(options =>
+{
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequiredLength = 8;
+    options.Password.RequireUppercase = false;
+    options.Password.RequireLowercase = false;
+    options.User.RequireUniqueEmail = true;
+    options.SignIn.RequireConfirmedAccount = false;
+    options.SignIn.RequireConfirmedEmail = false;
+    options.SignIn.RequireConfirmedPhoneNumber = false;
+})
+    .AddEntityFrameworkStores<BiddifyDbContext>()
+    .AddDefaultTokenProviders();
+
+//Dependency Injection
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 builder.Services.AddRazorPages();
 
