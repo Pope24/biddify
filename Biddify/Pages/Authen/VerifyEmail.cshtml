@@ -1,0 +1,36 @@
+﻿@page
+@model Biddify.Pages.Authen.VerifyEmailModel;
+@{
+    ViewData["Title"] = "Verify Email";
+    Layout = "~/Pages/Shared/_AuthenLayout.cshtml";
+}
+<div class="container">
+    <div>
+        <h2>Verify Email</h2>
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success">
+                @TempData["SuccessMessage"]
+            </div>
+            <a asp-page="/Authen/Login" class="text-decoration-none btn btn-success w-100 p-2">Back to login</a>
+        }
+        else {
+        <form method="post">
+            <div class="mb-3">
+                <label asp-for="VerifyEmailViewModel.Email" class="form-label"></label>
+                    <input asp-for="VerifyEmailViewModel.Email" class="form-control" />
+                    <span asp-validation-for="VerifyEmailViewModel.Email" class="text-danger"></span>
+            </div>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="submit" value="Verify Email" class="btn btn-success w-100 p-2" />
+            <a asp-page="/Authen/Login" class="text-decoration-none mt-3">Back to login</a>
+        </form>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial.cshtml");
+    }
+}

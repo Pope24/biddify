@@ -8,11 +8,11 @@ namespace DataAccess
 {
     public class MessageEntity
     {
-        public Guid Id { get; set; }
+        public string Id { get; set; }
 
-        public Guid SenderId { get; set; }
+        public string SenderId { get; set; }
         public UserEntity Sender { get; set; }
-        public Guid ReceiverId { get; set; }
+        public string ReceiverId { get; set; }
         public UserEntity Receiver { get; set; }
         public string Content { get; set; }
         public DateTime SentAt { get; set; } = DateTime.UtcNow;

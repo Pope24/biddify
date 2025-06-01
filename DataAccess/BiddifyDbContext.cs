@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,11 +8,9 @@ using System.Threading.Tasks;
 
 namespace DataAccess
 {
-    public class BiddifyDbContext : DbContext
+    public class BiddifyDbContext : IdentityDbContext<UserEntity>
     {
         public BiddifyDbContext(DbContextOptions<BiddifyDbContext> options) : base(options) { }
-
-        public DbSet<UserEntity> Users { get; set; }
         public DbSet<AuctionProductEntity> AuctionProducts { get; set; }
         public DbSet<BidEntity> Bids { get; set; }
         public DbSet<CommentEntity> Comments { get; set; }
@@ -49,6 +48,13 @@ namespace DataAccess
                 .WithMany()
                 .HasForeignKey(m => m.ReceiverId)
                 .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<WinningEntity>()
+                .HasOne(w => w.Winner)
+                .WithMany()
+                .HasForeignKey(w => w.WinnerId)
+                .HasPrincipalKey(u => u.Id)
+                .OnDelete(DeleteBehavior.Restrict);
+
         }
     }
 }
