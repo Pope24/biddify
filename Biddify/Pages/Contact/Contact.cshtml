@@ -1,0 +1,85 @@
+﻿@page "/Contact"
+@model Biddify.Pages.Contact.ContactModel
+@{
+    ViewData["Title"] = "Contact";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+@section FullWidthHeader {
+    <!-- Banner Section -->
+    <div class="banner-wrapper">
+        <img src="https://demo-egenslab.b-cdn.net/html/bidgen/preview/assets/images/banner/breadcrumb-bg.png"
+             class="banner-image"
+             alt="Auction Banner" />
+        <div class="banner-content">
+            <h1 class="banner-title">Contact</h1>
+            <p class="banner-breadcrumb flex item-center">
+                <a href="/" class="banner-link">
+                    <span class="flex item-center justify-content-center gap-2">
+                        Home
+                    </span>
+                </a> / Contact
+            </p>
+        </div>
+    </div>
+}
+
+<!-- Contact Section -->
+<div class="container mx-auto px-4 py-8">
+    <!-- Introductory Text -->
+    <div class="text-center mb-8">
+        <h1 class="text-3xl font-bold text-gray-800">Any Asking To The Officers?</h1>
+        <p class="text-gray-600 mt-2">
+            There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which
+        </p>
+    </div>
+
+    <!-- Main Content: Contact Info and Form -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Contact Us Section -->
+        <div class="bg-white rounded-lg p-6 shadow-lg">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">CONTACT US</h2>
+
+            <div class="mb-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-2">Let's Talk</h3>
+                <p class="text-gray-600">info@example.com</p>
+                <p class="text-gray-600">support@example.com</p>
+                <p class="text-gray-600">+88 0176 111 456</p>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-2">Location</h3>
+                <p class="text-gray-600">166/170, Ave 01 Streets Suite 66xyz, Bangladesh</p>
+            </div>
+
+            <div>
+                <h3 class="text-lg font-semibold text-gray-800 mb-2">Social Link</h3>
+                <p class="text-gray-600">Facebook: <a href="https://www.facebook.com/egensthe" class="text-blue-600 hover:underline">https://www.facebook.com/egensthe</a></p>
+                <p class="text-gray-600">Twitter: <a href="https://www.twitter.com/egensthe" class="text-blue-600 hover:underline">https://www.twitter.com/egensthe</a></p>
+            </div>
+        </div>
+
+        <!-- Questions or Comments Form -->
+        <div class="bg-white rounded-lg p-6 shadow-lg">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">QUESTIONS OR COMMENTS?</h2>
+            <form asp-action="Submit" method="post">
+                <div class="mb-4">
+                    <label for="fullName" class="block text-gray-600 mb-2">Full Name</label>
+                    <input type="text" id="fullName" name="FullName" placeholder="Full Name" class="w-full border px-3 py-2 rounded bg-gray-100" />
+                </div>
+
+                <div class="mb-4">
+                    <label for="email" class="block text-gray-600 mb-2">Email</label>
+                    <input type="email" id="email" name="Email" placeholder="Enter Your Email" class="w-full border px-3 py-2 rounded bg-gray-100" />
+                </div>
+
+                <div class="mb-4">
+                    <label for="message" class="block text-gray-600 mb-2">Message</label>
+                    <textarea id="message" name="Message" placeholder="Type your Message" rows="4" class="w-full border px-3 py-2 rounded bg-gray-100"></textarea>
+                </div>
+
+                <button type="submit" class="w-full bg-gray-800 text-white py-2 rounded hover:bg-gray-900">SUBMIT COMMENT</button>
+            </form>
+        </div>
+    </div>
+</div>

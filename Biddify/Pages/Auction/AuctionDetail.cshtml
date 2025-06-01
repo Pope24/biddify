@@ -1,0 +1,285 @@
+﻿@page "/Auction/Details/{id:int}"
+@model Biddify.Pages.Auction.AuctionDetailModel
+@{
+    ViewData["Title"] = "Auction Details";
+    var item = Model.Item;
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+    var timerId = $"timer-{item.Id}";
+    var endEpoch = ((DateTimeOffset)item.EndTimeUtc).ToUnixTimeMilliseconds();
+}
+
+@section FullWidthHeader {
+    <div class="banner-wrapper">
+        <img src="https://demo-egenslab.b-cdn.net/html/bidgen/preview/assets/images/banner/breadcrumb-bg.png"
+             class="banner-image"
+             alt="Auction Banner" />
+        <div class="banner-content" style="top: 14%">
+            <h1 class="banner-title">Auction Details</h1>
+            <p class="banner-breadcrumb flex item-center">
+                <a href="/" class="banner-link">Home</a> /
+                <a href="/Auction" class="banner-link">Auction</a> / Details
+            </p>
+        </div>
+    </div>
+}
+
+<!-- Main Content -->
+<div class="container mx-auto px-4 py-10">
+    <!-- Main Content -->
+    <div class="container mx-auto px-4 py-10">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+            <!-- LEFT COLUMN -->
+            <div>
+                <!-- Current Bid Box -->
+                <div class="background-primary flex justify-content-between text-white rounded-lg p-4 mb-4">
+                    <div>
+                        <p class="text-sm">Current Bid</p>
+                        <p class="text-3xl font-bold">$@item.CurrentBid.ToString("N2")</p>
+                    </div>
+                    <div class="bid-timer">
+                        <p id="@timerId" data-end="@endEpoch" class="timer-text">-- : -- : --</p>
+                    </div>
+                </div>
+                <div class="relative">
+                    <!-- Main Image -->
+                    <div class="relative">
+                        <img id="main-image" src="https://demo-egenslab.b-cdn.net/html/bidgen/preview/assets/images/product/details11.png" alt="@item.Name" class="w-full h-[320px] object-contain rounded shadow" />
+                    </div>
+
+                    <!-- Next and Prev buttons -->
+                    <button id="prev" class="absolute left-4 top-1/2 transform -translate-y-1/2 text-white bg-white p-2 rounded">
+                        <i class="bi bi-chevron-left text-black"></i>
+                    </button>
+                    <button id="next" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-white bg-white p-2 rounded">
+                        <i class="bi bi-chevron-right text-black"></i>
+                    </button>
+                </div>
+
+                <!-- Thumbnails -->
+                <div class="flex gap-2 mt-4">
+                    <img src="https://demo-egenslab.b-cdn.net/html/bidgen/preview/assets/images/product/details11.png" class="thumbnail w-16 h-16 object-cover rounded border cursor-pointer" data-index="0" />
+                    <img src="https://demo-egenslab.b-cdn.net/html/bidgen/preview/assets/images/product/details2.png" class="thumbnail w-16 h-16 object-cover rounded border cursor-pointer" data-index="1" />
+                    <img src="https://demo-egenslab.b-cdn.net/html/bidgen/preview/assets/images/product/details3.png" class="thumbnail w-16 h-16 object-cover rounded border cursor-pointer" data-index="2" />
+                    <img src="https://demo-egenslab.b-cdn.net/html/bidgen/preview/assets/images/product/details4.png" class="thumbnail w-16 h-16 object-cover rounded border cursor-pointer" data-index="3" />
+                </div>
+
+                <!-- Tabs -->
+                <div class="mt-6">
+                    <div class="flex space-x-4 border-b">
+                        <button class="tab-btn border-b-2 py-2 px-4 font-medium text-sm text-black border-black" data-tab="desc">Description</button>
+                        <button class="tab-btn text-gray-600 hover:text-black py-2 px-4 text-sm" data-tab="location">Location</button>
+                        <button class="tab-btn text-gray-600 hover:text-black py-2 px-4 text-sm" data-tab="video">About Video</button>
+                    </div>
+                    <div class="tab-content mt-4 text-gray-700 text-sm">
+                        <div class="tab-panel" id="tab-desc">
+                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quis adipisci cumque eligendi, provident animi, totam.
+                        </div>
+                        <div class="tab-panel hidden" id="tab-location">
+                            Địa điểm: Hà Nội hoặc TP.HCM tùy theo người bán.
+                        </div>
+                        <div class="tab-panel hidden" id="tab-video">
+                            Video giới thiệu sẽ được nhúng tại đây.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN -->
+            <div class="bg-white rounded-lg p-6 shadow-lg">
+                <!-- Title + Description -->
+                <h2 class="text-2xl font-bold">@item.Name</h2>
+                <p class="text-gray-600 mt-2">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla finibus lobortis pulvinar.</p>
+
+                <!-- Product Overview -->
+                <div class="mt-6">
+                    <h3 class="text-lg font-semibold border-b pb-2 mb-4">Product Overview</h3>
+                    <div class="grid grid-cols-2 gap-y-3 text-sm text-gray-800">
+                        <p><span class="font-semibold">Body Style:</span> Convertible</p>
+                        <p><span class="font-semibold">Transmission:</span> 6-Speed Manual</p>
+                        <p><span class="font-semibold">Drivetrain:</span> Rear Wheel Drive</p>
+                        <p><span class="font-semibold">Exteration:</span> Lime Gold Drive</p>
+                        <p><span class="font-semibold">Interior:</span> Agate Grey</p>
+                        <p><span class="font-semibold">Miles:</span> 12</p>
+                        <p><span class="font-semibold">Doors:</span> 2</p>
+                        <p><span class="font-semibold">Engine:</span> 2</p>
+                        <p><span class="font-semibold">Passengers:</span> Convertible</p>
+                        <p><span class="font-semibold">Fuel Mileage:</span> 3.4L mid engine V6</p>
+                        <p><span class="font-semibold">Fuel Type:</span> Petrol</p>
+                        <p><span class="font-semibold">Condition:</span> Brand New</p>
+                        <p><span class="font-semibold">Warranty:</span> 3 Years Limited</p>
+                    </div>
+                </div>
+
+                <!-- Bid Form -->
+                <div class="mt-8 bg-gray-50 rounded p-4">
+                    <h3 class="text-lg font-semibold mb-2">Bid Now</h3>
+                    <p class="text-sm text-gray-600 mb-4">Bid Amount: Minimum $20.00</p>
+                    <form>
+                        <input type="number" placeholder="$00.00" class="w-full border px-3 py-2 rounded mb-4" />
+                        <button class="w-full bg-black text-white py-2 rounded hover:bg-gray-800" type="submit">PLACE BID</button>
+                    </form>
+                </div>
+
+                <div class="bg-white rounded-lg p-6 shadow-lg mb-6 mt-6">
+                    <h2 class="text-2xl font-bold">BIDDING HISTORY — —</h2>
+                    <div class="mt-4">
+                        <div class="flex items-center mb-4">
+                            <img src="https://via.placeholder.com/40" alt="Robart Fox" class="w-10 h-10 rounded-full mr-3">
+                            <div>
+                                <p class="font-semibold">Robart FOX</p>
+                                <p class="text-gray-600">Bid 23 minutes ago for 24.5$</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center mb-4">
+                            <img src="https://via.placeholder.com/40" alt="Leslie Alexander" class="w-10 h-10 rounded-full mr-3">
+                            <div>
+                                <p class="font-semibold">Leslie Alexander</p>
+                                <p class="text-gray-600">Bid 23 minutes ago for 24.5$</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <img src="https://via.placeholder.com/40" alt="Jane Cooper" class="w-10 h-10 rounded-full mr-3">
+                            <div>
+                                <p class="font-semibold">Jane Cooper</p>
+                                <p class="text-gray-600">Bid 23 minutes ago for 24.5$</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Related Auctions (Simple Card Style) -->
+    <div class="mt-10">
+        <h3 class="text-xl font-semibold mb-4">Related Auctions</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+
+            @foreach (var auctionItem in Model.AuctionItems)
+            {
+                var timerIdAuctionItem = $"timer-{auctionItem.Id}";
+                var endEpochAuctionItem = ((DateTimeOffset)auctionItem.EndTimeUtc).ToUnixTimeMilliseconds();
+
+                <div class="auction-card">
+                    <!-- title & price -->
+                    <div class="card-header">
+                        <h2 class="item-title">@auctionItem.Name</h2>
+                        <p class="item-price">$@auctionItem.Price</p>
+                    </div>
+
+                    <!-- image -->
+                    <div class="card-image">
+                        <img src="@(auctionItem.ImageUrl)" alt="@auctionItem.Name" class="item-img" />
+                        <div class="item-id">ID: @auctionItem.Id</div>
+                    </div>
+
+                    <!-- bid info -->
+                    <div class="card-bid-info">
+                        <div>
+                            <p class="bid-label">Current Bid</p>
+                            <p class="bid-value">$@auctionItem.CurrentBid</p>
+                        </div>
+                        <div class="bid-timer">
+                            <p id="@timerIdAuctionItem" data-end="@endEpochAuctionItem" class="timer-text">-- : -- : --</p>
+                            <p class="timer-label">Waiting For Bid</p>
+                        </div>
+                    </div>
+
+                    <div class="submit-container">
+                        <a class="submit-btn btn btn-dark" href="/Auction/Details/@auctionItem.Id">Submit A Bid</a>
+                    </div>
+
+                </div>
+
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Countdown Script + Tabs Script -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Countdown
+        document.querySelectorAll('[data-end]').forEach(el => {
+            const endTime = Number(el.dataset.end);
+            startCountdown(endTime, el.id);
+        });
+
+        // Tabs
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const tabPanels = document.querySelectorAll('.tab-panel');
+
+        tabButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tab = btn.getAttribute('data-tab');
+                tabPanels.forEach(panel => {
+                    panel.classList.add('hidden');
+                });
+                document.getElementById(`tab-${tab}`).classList.remove('hidden');
+
+                tabButtons.forEach(b => b.classList.remove('border-b-2', 'border-black', 'text-black'));
+                btn.classList.add('border-b-2', 'border-black', 'text-black');
+            });
+        });
+
+        // Default active tab
+        tabButtons[0].click();
+    });
+
+    function startCountdown(endTime, elementId) {
+        function update() {
+            const now = Date.now();
+            const diff = endTime - now;
+            const el = document.getElementById(elementId);
+
+            if (!el) return;
+
+            if (diff <= 0) {
+                el.textContent = "00 : 00 : 00";
+                clearInterval(interval);
+                return;
+            }
+
+            const h = String(Math.floor(diff / 3_600_000)).padStart(2, '0');
+            const m = String(Math.floor((diff % 3_600_000) / 60_000)).padStart(2, '0');
+            const s = String(Math.floor((diff % 60_000) / 1_000)).padStart(2, '0');
+            el.textContent = `${h} : ${m} : ${s}`;
+        }
+        update();
+        const interval = setInterval(update, 1000);
+    }
+
+    const thumbnails = document.querySelectorAll('.thumbnail');
+    const mainImage = document.getElementById('main-image');
+    const nextButton = document.getElementById('next');
+    const prevButton = document.getElementById('prev');
+
+    let currentIndex = 0;
+
+    // Thumbnails click event
+    thumbnails.forEach((thumbnail, index) => {
+        thumbnail.addEventListener('click', () => {
+            currentIndex = index;
+            updateMainImage();
+        });
+    });
+
+    // Update main image based on current index
+    function updateMainImage() {
+        const selectedThumbnail = thumbnails[currentIndex];
+        mainImage.src = selectedThumbnail.src;
+    }
+
+    // Next button functionality
+    nextButton.addEventListener('click', () => {
+        currentIndex = (currentIndex + 1) % thumbnails.length;
+        updateMainImage();
+    });
+
+    // Prev button functionality
+    prevButton.addEventListener('click', () => {
+        currentIndex = (currentIndex - 1 + thumbnails.length) % thumbnails.length;
+        updateMainImage();
+    });
+</script>
