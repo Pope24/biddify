@@ -1,43 +1,69 @@
-﻿@page
+﻿@page "/Register"
 @model Biddify.Pages.Authen.RegisterModel
 @{
     ViewData["Title"] = "Register";
-    Layout = "~/Pages/Shared/_AuthenLayout.cshtml";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
 }
-<div class="container">
-    <div>
-        <h2>Register</h2>
-        <form method="post">
-            <div class="mb-3">
-                <label asp-for="RegisterViewModel.Name" class="form-label"></label>
-                <input asp-for="RegisterViewModel.Name" class="form-control" />
-                <span asp-validation-for="RegisterViewModel.Name" class="text-danger"></span>
+
+<div class="items-center container mx-auto mt-5">
+    <div class="min-h-full flex-col justify-center px-6 py-12 lg:px-8 rounded-t-lg" style="background-color: #12173d;">
+        <div class="text-center">
+            <img src="~/css/Logo/snapedit_1748847796914.png" class="mx-auto h-20 w-auto" />
+            <h2 class="mt-6 text-2xl font-bold text-white">Create your account</h2>
+        </div>
+
+        <form method="post" class="mt-10 space-y-6 w-1/3 mx-auto">
+            <div>
+                <label asp-for="RegisterViewModel.Name" class="block text-sm font-medium" style="color: #9395a7;"></label>
+                <input asp-for="RegisterViewModel.Name" placeholder="Full Name"
+                       class="mt-2 block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:outline-indigo-600" />
+                <span asp-validation-for="RegisterViewModel.Name" class="text-sm text-red-500"></span>
             </div>
-            <div class="mb-3">
-                <label asp-for="RegisterViewModel.Email" class="form-label"></label>
-                <input asp-for="RegisterViewModel.Email" class="form-control" />
-                <span asp-validation-for="RegisterViewModel.Email" class="text-danger"></span>
+
+            <div>
+                <label asp-for="RegisterViewModel.Email" class="block text-sm font-medium" style="color: #9395a7;"></label>
+                <input asp-for="RegisterViewModel.Email" placeholder="Email address"
+                       class="mt-2 block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:outline-indigo-600" />
+                <span asp-validation-for="RegisterViewModel.Email" class="text-sm text-red-500"></span>
             </div>
-            <div class="mb-3">
-                <label asp-for="RegisterViewModel.Password" class="form-label"></label>
-                <input asp-for="RegisterViewModel.Password" class="form-control" />
-                <span asp-validation-for="RegisterViewModel.Password" class="text-danger"></span>
+
+            <div>
+                <label asp-for="RegisterViewModel.Password" class="block text-sm font-medium" style="color: #9395a7;"></label>
+                <input asp-for="RegisterViewModel.Password" placeholder="Password" type="password"
+                       class="mt-2 block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:outline-indigo-600" />
+                <span asp-validation-for="RegisterViewModel.Password" class="text-sm text-red-500"></span>
             </div>
-            <div class="mb-3">
-                <label asp-for="RegisterViewModel.ConfirmPassword" class="form-label"></label>
-                <input asp-for="RegisterViewModel.ConfirmPassword" class="form-control" />
-                <span asp-validation-for="RegisterViewModel.ConfirmPassword" class="text-danger"></span>
+
+            <div>
+                <label asp-for="RegisterViewModel.ConfirmPassword" class="block text-sm font-medium" style="color: #9395a7;"></label>
+                <input asp-for="RegisterViewModel.ConfirmPassword" placeholder="Confirm Password" type="password"
+                       class="mt-2 block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:outline-indigo-600" />
+                <span asp-validation-for="RegisterViewModel.ConfirmPassword" class="text-sm text-red-500"></span>
             </div>
-            <div class="form-check mb-3">
-                <label class="form-check-label">
-                    <input asp-for="RegisterViewModel.IsSeller" class="form-check-input" />
-                    @Html.DisplayNameFor(m => m.RegisterViewModel.IsSeller)
-                </label>
+
+            <div class="flex items-center">
+                <input asp-for="RegisterViewModel.IsSeller" class="form-check-input rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" />
+                <label class="ml-2 block text-sm" style="color: #9395a7;">@Html.DisplayNameFor(m => m.RegisterViewModel.IsSeller)</label>
             </div>
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="submit" value="Register" class="btn btn-success w-100 p-2" />
-            <a asp-page="/Authen/Login" class="text-decoration-none mt-3">Already have an account ?</a>
+
+            <div asp-validation-summary="ModelOnly" class="text-red-500 text-sm"></div>
+
+            <div>
+                <button type="submit"
+                        class="w-full rounded-md px-4 py-2 text-white text-sm font-semibold hover:bg-indigo-500 focus:outline-2 focus:outline-offset-2 focus:outline-indigo-600"
+                        style="background-color: #4f46e5;">
+                    <!-- #4f46e5 là Indigo-600 -->
+                    Register
+                </button>
+            </div>
         </form>
+    </div>
+
+    <div class="rounded-b-lg text-center py-6" style="background-color: #191f4b;">
+        <p class="text-sm" style="color: #a0aec0;">
+            Already have an account?
+            <a asp-page="/Authen/Login" class="font-semibold hover:text-indigo-400" style="color: #4f46e5;">Login</a>
+        </p>
     </div>
 </div>
 
