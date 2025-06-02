@@ -1,43 +1,63 @@
-﻿@page
-@model Biddify.Pages.Authen.LoginModel;
+﻿@page "/Login"
+@model Biddify.Pages.Authen.LoginModel
 @{
     ViewData["Title"] = "Login";
-    Layout = "~/Pages/Shared/_AuthenLayout.cshtml";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
 }
-<div class="container">
-    <div>
-        <h2>Login</h2>
-        <form asp-action="Login" method="post">
-            <div class="mb-3">
-                <label asp-for="LoginViewModel.Email" class="form-label"></label>
-                <input asp-for="LoginViewModel.Email" class="form-control" />
-                <span asp-validation-for="LoginViewModel.Email" class="text-danger"></span>
+
+<div>
+    <div class="items-center container mx-auto mt-5">
+        <div class="min-h-full flex-col justify-center px-6 py-12 lg:px-8 rounded-t-lg" style="background-color: #12173d;">
+            <div class="sm:mx-auto sm:w-full sm:max-w-sm">
+                <img class="mx-auto h-20 w-auto" src="~/css/Logo/snapedit_1748847796914.png">
+                <h2 class="mt-6 text-center text-2xl/9 font-bold tracking-tight" style="color: white;">Sign in to your account</h2>
             </div>
-            <div class="m-3">
-                <label asp-for="LoginViewModel.Password" class="form-label"></label>
-                <input asp-for="LoginViewModel.Password" class="form-control" />
-                <span asp-validation-for="LoginViewModel.Password" class="text-danger"></span>
+
+            <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+                <form class="space-y-8" method="post">
+                    <div>
+                        <label asp-for="LoginViewModel.Email" class="block text-sm/6 font-medium" style="color: #9395a7;"></label>
+                        <div class="mt-2">
+                            <input asp-for="LoginViewModel.Email" placeholder="Enter your email"
+                                   class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
+                            <span asp-validation-for="LoginViewModel.Email" class="text-red-500 text-sm"></span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="flex items-center justify-between">
+                            <label asp-for="LoginViewModel.Password" class="block text-sm/6 font-medium" style="color: #9395a7;"></label>
+                            <div class="text-sm">
+                                <a href="/Verifyemail" class="font-semibold hover:text-indigo-500" style="color: #4f46e5;">Forgot password?</a>
+                            </div>
+                        </div>
+                        <div class="mt-2">
+                            <input asp-for="LoginViewModel.Password" type="password" placeholder="Enter your password"
+                                   class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
+                            <span asp-validation-for="LoginViewModel.Password" class="text-red-500 text-sm"></span>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 mb-10">
+                        <button type="submit"
+                                class="flex w-full justify-center rounded-md px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                                style="background-color: #4f46e5;">
+                            Sign in
+                        </button>
+                    </div>
+                </form>
             </div>
-            <div class="float-end">
-                <a asp-page="/Authen/VerifyEmail" class="text-decoration-none">
-                    Forgot password ?
-                </a>
-            </div>
-            <div asp-validation-summary="ModelOnly" class="text-danger text-decoration-none"></div>
-            <div class="form-check mb-3">
-                <label class="form-check-label">
-                    <input asp-for="LoginViewModel.RememberMe" class="form-check-input" />
-                    @Html.DisplayNameFor(l => l.LoginViewModel.RememberMe)
-                </label>
-            </div>
-            <input type="submit" value="Login" class="btn btn-success w-100 p-2" />
-            <a asp-page="/Authen/Register" class="text-decoration-none mt-3">Do you have an account ?</a>
-        </form>
+        </div>
+
+        <div class="rounded-b-lg" style="background-color: #191f4b;">
+            <p class="h-20 text-center text-sm/6 text-gray-500 p-8">
+                Not a member?
+                <a href="/Register" class="font-semibold hover:text-indigo-500" style="color: #4f46e5;">Sign Up</a>
+            </p>
+        </div>
     </div>
 </div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial.cshtml");
-    }
+    <partial name="_ValidationScriptsPartial" />
 }
