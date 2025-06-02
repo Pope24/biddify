@@ -1,0 +1,98 @@
+﻿@page "/Auction"
+@model Biddify.Pages.Auction.AuctionModel
+@{
+    ViewData["Title"] = "Auction";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+@section FullWidthHeader {
+    <!-- Banner Section -->
+    <div class="banner-wrapper">
+        <img src="https://demo-egenslab.b-cdn.net/html/bidgen/preview/assets/images/banner/breadcrumb-bg.png"
+             class="banner-image"
+             alt="Auction Banner" />
+        <div class="banner-content">
+            <h1 class="banner-title">Auction</h1>
+            <p class="banner-breadcrumb flex item-center"><a href="/" class="banner-link">
+                    <span class="flex item-center justify-content-center gap-2">
+                        Home
+                    </span>
+                </a> / Auction
+            </p>
+        </div>
+    </div>
+}
+
+<!-- Auction List -->
+<div class="container mx-auto px-4 py-10">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+
+        @foreach (var item in Model.AuctionItems)
+        {
+            var timerId = $"timer-{item.Id}";
+            var endEpoch = ((DateTimeOffset)item.EndTimeUtc).ToUnixTimeMilliseconds();
+
+            <div class="auction-card">
+                <!-- title & price -->
+                <div class="card-header">
+                    <h2 class="item-title">@item.Name</h2>
+                    <p class="item-price">$@item.Price</p>
+                </div>
+
+                <!-- image -->
+                <div class="card-image">
+                    <img src="@(item.ImageUrl)" alt="@item.Name" class="item-img" />
+                    <div class="item-id">ID: @item.Id</div>
+                </div>
+
+                <!-- bid info -->
+                <div class="card-bid-info">
+                    <div>
+                        <p class="bid-label">Current Bid</p>
+                        <p class="bid-value">$@item.CurrentBid</p>
+                    </div>
+                    <div class="bid-timer">
+                        <p id="@timerId" data-end="@endEpoch" class="timer-text">-- : -- : --</p>
+                        <p class="timer-label">Waiting For Bid</p>
+                    </div>
+                </div>
+
+                <div class="submit-container">
+                    <a class="submit-btn btn btn-dark" href="/Auction/Details/@item.Id">Submit A Bid</a>
+                </div>
+
+            </div>
+
+        }
+    </div>
+</div>
+
+<!-- Countdown JS -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('[data-end]').forEach(el => {
+            const endTime = Number(el.dataset.end);
+            startCountdown(endTime, el.id);
+        });
+    });
+
+    function startCountdown(endTime, elementId) {
+        console.log(elementId);
+        function update() {
+            const now = Date.now();
+            const diff = endTime - now;
+
+            if (diff <= 0) {
+                document.getElementById(elementId).textContent = "00 : 00 : 00";
+                clearInterval(interval);
+                return;
+            }
+            const h = String(Math.floor(diff / 3_600_000)).padStart(2, '0');
+            const m = String(Math.floor(diff % 3_600_000 / 60_000)).padStart(2, '0');
+            const s = String(Math.floor(diff % 60_000 / 1_000)).padStart(2, '0');
+            document.getElementById(elementId).textContent = `${h} : ${m} : ${s}`;
+        }
+        update();
+        const interval = setInterval(update, 1000);
+    }
+</script>
