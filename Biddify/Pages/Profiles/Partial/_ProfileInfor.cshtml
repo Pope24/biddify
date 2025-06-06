@@ -1,0 +1,21 @@
+﻿@{
+    Layout = null;
+
+    // Dữ liệu demo
+    var name = "Nguyễn Văn A";
+    var email = "a@example.com";
+}
+
+<div>
+    <h2 class="text-xl font-bold mb-4">Thông tin cá nhân</h2>
+    <form class="space-y-4">
+        <div>
+            <label class="block">Tên</label>
+            <input class="border p-2 w-full rounded" type="text" value="@name" />
+        </div>
+        <div>
+            <label class="block">Email</label>
+            <input class="border p-2 w-full rounded" type="email" value="@email" />
+        </div>
+    </form>
+</div>

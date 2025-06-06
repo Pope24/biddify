@@ -1,0 +1,57 @@
+﻿@page "/Profile"
+@model Biddify.Pages.Profiles.MyProfileModel
+@{
+    ViewData["Title"] = "MyProfile";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+@section FullWidthHeader {
+    <!-- Banner Section -->
+    <div class="banner-wrapper">
+        <img src="https://demo-egenslab.b-cdn.net/html/bidgen/preview/assets/images/banner/breadcrumb-bg.png"
+             class="banner-image"
+             alt="Auction Banner" />
+        <div class="banner-content">
+            <h1 class="banner-title">Contact</h1>
+            <p class="banner-breadcrumb flex item-center">
+                <a href="/" class="banner-link">
+                    <span class="flex item-center justify-content-center gap-2">
+                        Home
+                    </span>
+                </a> / Profile
+            </p>
+        </div>
+    </div>
+}
+
+
+<div class="flex min-h-screen">
+    <!-- Sidebar -->
+    <div class="w-1/4 bg-gray-100 border-r p-4">
+        <ul class="space-y-2">
+            <li><button class="w-full text-left hover:bg-gray-200 p-2 rounded" onclick="loadTab('info')">Profile Information</button></li>
+            <li><button class="w-full text-left hover:bg-gray-200 p-2 rounded" onclick="loadTab('security')">Security management</button></li>
+            <li><button class="w-full text-left hover:bg-gray-200 p-2 rounded" onclick="loadTab('won')">Sản phẩm đã thắng</button></li>
+            <li><button class="w-full text-left hover:bg-gray-200 p-2 rounded" onclick="loadTab('products')">Sản phẩm của tôi</button></li>
+            <li><button class="w-full text-left hover:bg-gray-200 p-2 rounded" onclick="loadTab('settings')">Cài đặt</button></li>
+        </ul>
+    </div>
+
+    <!-- Nội dung -->
+    <div class="w-3/4 p-4" id="profile-content">
+        @{
+            @await Html.PartialAsync("Partial/_ProfileInfor")
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function loadTab(tabName) {
+            fetch(`/Profile?handler=LoadPartial&tab=${tabName}`)
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('profile-content').innerHTML = html;
+                });
+        }
+    </script>
+}
