@@ -16,12 +16,11 @@ namespace Biddify.Pages.Profiles
                     return Partial("Partial/_ProfileInfor");
                 case "security":
                     return Partial("Partial/_SecurityManagement");
-                case "won":
-                    return Partial("Partial/_MyWonProducts");
-                case "products":
-                    return Partial("Partial/_MyProducts");
-                case "settings":
-                    return Partial("Partial/_Settings");
+                case "auction":
+                    return Partial("Partial/_HistoryAuction");
+                case "transaction":
+                    return Partial("Partial/_HistoryTransaction");
+             
                 default:
                     return Content("Không tìm thấy nội dung.");
             }

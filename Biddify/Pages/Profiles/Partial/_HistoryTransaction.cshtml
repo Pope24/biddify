@@ -1,0 +1,65 @@
+﻿@page
+@model Biddify.Pages.Profiles.Partial._HistoryTransactionModel
+@{
+}
+
+<div class="max-w-6xl mx-auto p-6">
+    <div class="bg-white py-6 px-8 rounded-lg shadow mb-6 border border-gray-300">
+        <h2 class="text-2xl font-bold mb-6 uppercase">Transaction History</h2>
+
+        <!-- Tabs -->
+        <div class="flex space-x-6 text-sm font-medium mb-10 mt-3">
+            <a href="#" class="text-purple-600">All Transactions(50)</a>
+            <a href="#" class="text-gray-600">Pending(10)</a>
+            <a href="#" class="text-gray-600">Completed(8)</a>
+            <a href="#" class="text-gray-600">Cancelled(22)</a>
+        </div>
+
+        <!-- Header -->
+        <div class="grid grid-cols-5 font-medium text-gray-600 mb-4 text-sm">
+            <div>Time</div>
+            <div>Method</div>
+            <div>Txn. ID</div>
+            <div>Total</div>
+            <div>Status</div>
+          
+        </div>
+
+        <!-- Transaction List -->
+        <div class="space-y-6 text-sm">
+
+            <!-- Transaction Item -->
+            <div class="grid grid-cols-5 items-center">
+                <div>2025-06-13</div>
+                <div>PayPal</div>
+                <div>#TXN-00123</div>
+                <div class="font-semibold">$452.23</div>
+                <div class="text-yellow-500 font-medium">Pending</div>
+               
+            </div>
+
+            <hr />
+
+            <div class="grid grid-cols-5 items-center">
+                <div>2025-06-10</div>
+                <div>Credit Card</div>
+                <div>#TXN-00122</div>
+                <div class="font-semibold">$299.99</div>
+                <div class="text-green-500 font-medium">Completed</div>
+                
+            </div>
+
+            <hr />
+
+            <div class="grid grid-cols-5 items-center">
+                <div>2025-06-08</div>
+                <div>Bank Transfer</div>
+                <div>#TXN-00121</div>
+                <div class="font-semibold">$150.00</div>
+                <div class="text-red-500 font-medium">Cancelled</div>
+                
+            </div>
+
+        </div>
+    </div>
+</div>

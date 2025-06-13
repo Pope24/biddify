@@ -26,13 +26,39 @@
 
 <div class="flex min-h-screen">
     <!-- Sidebar -->
-    <div class="w-1/4 bg-gray-100 border-r p-4">
-        <ul class="space-y-2">
-            <li><button class="w-full text-left hover:bg-gray-200 p-2 rounded" onclick="loadTab('info')">Profile Information</button></li>
-            <li><button class="w-full text-left hover:bg-gray-200 p-2 rounded" onclick="loadTab('security')">Security management</button></li>
-            <li><button class="w-full text-left hover:bg-gray-200 p-2 rounded" onclick="loadTab('won')">Sản phẩm đã thắng</button></li>
-            <li><button class="w-full text-left hover:bg-gray-200 p-2 rounded" onclick="loadTab('products')">Sản phẩm của tôi</button></li>
-            <li><button class="w-full text-left hover:bg-gray-200 p-2 rounded" onclick="loadTab('settings')">Cài đặt</button></li>
+    <div class="w-1/4  border-r p-4" style="background-color:#f8f9fa">
+        <ul class="space-y-3">
+          
+            <li>
+                <button class="w-full text-left bg-white hover:bg-black p-4 rounded-lg flex items-center text-base font-medium shadow-sm" onclick="loadTab('info')">
+                    <span class="material-symbols-outlined mr-4 text-2xl">account_circle</span>
+                    <div class="uppercase">Profile Information</div>
+                </button>
+            </li>
+            <li>
+                <button class="w-full text-left bg-white hover:bg-gray-100 p-4 rounded-lg flex items-center text-base font-medium shadow-sm" onclick="loadTab('security')">
+                    <span class="material-symbols-outlined mr-4 text-2xl">beenhere</span>
+                    <div class="uppercase">Security Management</div>
+                </button>
+            </li>
+            <li>
+                <button class="w-full text-left bg-white hover:bg-gray-100 p-4 rounded-lg flex items-center text-base font-medium shadow-sm" onclick="loadTab('auction')">
+                    <span class="material-symbols-outlined mr-4 text-2xl">gavel</span>
+                    <div class="uppercase">Auction History </div>
+                </button>
+            </li>
+            <li>
+                <button class="w-full text-left bg-white hover:bg-gray-100 p-4 rounded-lg flex items-center text-base font-medium shadow-sm" onclick="loadTab('transaction')">
+                    <span class="material-symbols-outlined mr-4 text-2xl">credit_card_clock</span>
+                    <div class="uppercase">Transaction History</div>
+                </button>
+            </li>
+            <li>
+                <button class="w-full text-left bg-white hover:bg-red-100 p-4 rounded-lg flex items-center text-base font-medium shadow-sm text-red-600" onclick="loadTab('settings')">
+                    <span class="material-symbols-outlined mr-4 text-2xl">logout</span>
+                    <div class="uppercase">Log Out</div>
+                </button>
+            </li>
         </ul>
     </div>
 
