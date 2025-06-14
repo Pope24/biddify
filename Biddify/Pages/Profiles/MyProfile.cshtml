@@ -1,0 +1,83 @@
+﻿@page "/Profile"
+@model Biddify.Pages.Profiles.MyProfileModel
+@{
+    ViewData["Title"] = "MyProfile";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+@section FullWidthHeader {
+    <!-- Banner Section -->
+    <div class="banner-wrapper">
+        <img src="https://demo-egenslab.b-cdn.net/html/bidgen/preview/assets/images/banner/breadcrumb-bg.png"
+             class="banner-image"
+             alt="Auction Banner" />
+        <div class="banner-content">
+            <h1 class="banner-title">Contact</h1>
+            <p class="banner-breadcrumb flex item-center">
+                <a href="/" class="banner-link">
+                    <span class="flex item-center justify-content-center gap-2">
+                        Home
+                    </span>
+                </a> / Profile
+            </p>
+        </div>
+    </div>
+}
+
+
+<div class="flex min-h-screen">
+    <!-- Sidebar -->
+    <div class="w-1/4  border-r p-4" style="background-color:#f8f9fa">
+        <ul class="space-y-3">
+          
+            <li>
+                <button class="w-full text-left bg-white hover:bg-black p-4 rounded-lg flex items-center text-base font-medium shadow-sm" onclick="loadTab('info')">
+                    <span class="material-symbols-outlined mr-4 text-2xl">account_circle</span>
+                    <div class="uppercase">Profile Information</div>
+                </button>
+            </li>
+            <li>
+                <button class="w-full text-left bg-white hover:bg-gray-100 p-4 rounded-lg flex items-center text-base font-medium shadow-sm" onclick="loadTab('security')">
+                    <span class="material-symbols-outlined mr-4 text-2xl">beenhere</span>
+                    <div class="uppercase">Security Management</div>
+                </button>
+            </li>
+            <li>
+                <button class="w-full text-left bg-white hover:bg-gray-100 p-4 rounded-lg flex items-center text-base font-medium shadow-sm" onclick="loadTab('auction')">
+                    <span class="material-symbols-outlined mr-4 text-2xl">gavel</span>
+                    <div class="uppercase">Auction History </div>
+                </button>
+            </li>
+            <li>
+                <button class="w-full text-left bg-white hover:bg-gray-100 p-4 rounded-lg flex items-center text-base font-medium shadow-sm" onclick="loadTab('transaction')">
+                    <span class="material-symbols-outlined mr-4 text-2xl">credit_card_clock</span>
+                    <div class="uppercase">Transaction History</div>
+                </button>
+            </li>
+            <li>
+                <button class="w-full text-left bg-white hover:bg-red-100 p-4 rounded-lg flex items-center text-base font-medium shadow-sm text-red-600" onclick="loadTab('settings')">
+                    <span class="material-symbols-outlined mr-4 text-2xl">logout</span>
+                    <div class="uppercase">Log Out</div>
+                </button>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Nội dung -->
+    <div class="w-3/4 p-4" id="profile-content">
+        @{
+            @await Html.PartialAsync("Partial/_ProfileInfor")
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function loadTab(tabName) {
+            fetch(`/Profile?handler=LoadPartial&tab=${tabName}`)
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('profile-content').innerHTML = html;
+                });
+        }
+    </script>
+}

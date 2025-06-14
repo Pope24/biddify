@@ -1,0 +1,96 @@
+﻿@page
+@model Biddify.Pages.Profiles.Partial._HistoryAuctionModel
+@{
+}
+<div class="max-w-6xl mx-auto p-6">
+    <div class="bg-white py-6 px-8 rounded-lg shadow mb-6 border border-gray-300">
+        <h2 class="text-2xl font-bold mb-6 text-uppercase">Auction history</h2>
+
+        <!-- Tabs -->
+        @* <div class="flex space-x-6 text-sm font-medium mb-6">
+            <a href="#" class="text-purple-600">All Order(50)</a>
+            <a href="#" class="text-gray-600">Pending(10)</a>
+            <a href="#" class="text-gray-600">Completed(8)</a>
+            <a href="#" class="text-gray-600">Cancelled(22)</a>
+        </div>
+        <div class="space-x-2">
+            <button class="border border-gray-300 rounded-full px-4 py-1 text-sm">View Invoice</button>
+            <button class="bg-purple-600 text-white rounded-full px-4 py-1 text-sm">View Order</button>
+        </div> *@
+        <!-- Header + Buttons -->
+        <div class="flex justify-between items-center mb-4 text-gray-600 text-sm font-medium">
+            <div class="grid grid-cols-4 w-full">
+                <div>Item</div>
+                <div>Description</div>
+                <div>Total</div>
+                <div>Details</div>
+            </div>
+         
+        </div>
+
+        <!-- Order List -->
+        <div class="space-y-6">
+
+            <!-- Order Item -->
+            <div class="grid grid-cols-4 items-center text-sm flex">
+                <div class="flex items-center space-x-4">
+                    <img src="https://media.wired.com/photos/61bd571ff6b645152a4dc4ad/master/pass/Evolution-Luxury-Watches-Oris.jpg" alt="book" class="w-14 h-14 rounded object-cover" />
+                    <div class="text-gray-500 text-xs"> x 1</div>
+                </div>
+                <div class="text-orange-500 font-medium">
+                    <div>
+                        <div class="font-medium">Adventure Story Book</div>
+                 
+                    </div>
+                </div>
+                <div class="font-semibold">$452.23</div>
+                <div>
+                    <button class="bg-purple-600 text-white text-xs px-4 py-1 rounded-full">Order Details</button>
+                </div>
+            </div>
+
+            <hr />
+
+            <!-- Order Item -->
+            <div class="grid grid-cols-4 items-center text-sm">
+                <div class="flex items-center space-x-4 flex">
+                    <img src="https://media.wired.com/photos/61bd571ff6b645152a4dc4ad/master/pass/Evolution-Luxury-Watches-Oris.jpg" alt="backpack" class="w-14 h-14 rounded object-cover" />
+                    <div class="text-gray-500 text-xs"> x 1</div>
+                </div>
+                <div class="text-green-500 font-medium">
+                    <div>
+                        <div class="font-medium">Travelling Backpack</div>
+                        
+                    </div>
+                </div>
+                <div class="font-semibold">$452.23</div>
+                <div>
+                    <button class="bg-purple-600 text-white text-xs px-4 py-1 rounded-full">Order Details</button>
+                </div>
+            </div>
+
+            <hr />
+
+            <!-- Order Item -->
+            <div class="grid grid-cols-4 items-center text-sm">
+                <div class="flex items-center space-x-4 flex">
+                    <img src="https://media.wired.com/photos/61bd571ff6b645152a4dc4ad/master/pass/Evolution-Luxury-Watches-Oris.jpg" alt="camera" class="w-14 h-14 rounded object-cover" />
+                    <div class="text-gray-500 text-xs"> x 1</div>
+               
+                </div>
+                <div class="text-green-500 font-medium">
+                    <div>
+                        <div class="font-medium">Mirrorless Cameras</div>
+                    
+                    </div>
+                </div>
+                <div class="font-semibold">$452.23</div>
+                <div>
+                    <button class="bg-purple-600 text-white text-xs px-4 py-1 rounded-full">Order Details</button>
+                </div>
+            </div>
+        </div>
+    
+
+    </div>
+</div>

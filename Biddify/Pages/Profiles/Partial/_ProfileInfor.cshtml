@@ -1,0 +1,148 @@
+﻿@{
+    Layout = null;
+}
+<div class="p-6 max-w-6xl mx-auto " id="informationForm">
+ 
+
+    <h2 class="text-2xl  text-uppercase font-semibold mb-6">Profile</h2>
+
+    <!-- Profile Header -->
+    <div class="bg-white p-6 rounded-lg shadow mb-6">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRhplEXPpWAYGxIkic17JzVWJVdgDyW16y8kw&s" class="w-20 h-20 rounded-full object-cover" alt="Profile Photo" />
+                <div>
+                    <h3 class="text-lg font-semibold">Musharof Chowdhury</h3>
+                    <p class="text-sm text-gray-500">Team Manager | Arizona, United States.</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-3">
+                <button class="text-gray-500 hover:text-blue-500"><i class="fab fa-facebook"></i></button>
+                <button class="text-gray-500 hover:text-blue-500"><i class="fab fa-x-twitter"></i></button>
+                <button class="text-gray-500 hover:text-blue-500"><i class="fab fa-linkedin"></i></button>
+                <button class="text-gray-500 hover:text-blue-500"><i class="fab fa-instagram"></i></button>
+                <button onclick="showEditForm()" class="ml-4 px-4 py-2 border rounded-md hover:bg-gray-100">Edit</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Personal Information Display -->
+    <div class="bg-white p-6 rounded-lg shadow mb-6">
+        <div class="flex justify-between items-center mb-4">
+            <h4 class="text-lg font-semibold">Personal Information</h4>
+            <button onclick="showEditForm()" class="px-4 py-2 border rounded-md hover:bg-gray-100">Edit</button>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700">
+            <div>
+                <span class="font-medium">First Name</span><br>Chowdhury
+            </div>
+            <div>
+                <span class="font-medium">Last Name</span><br>Musharof
+            </div>
+            <div>
+                <span class="font-medium">Email address</span><br><a href="mailto:randomuser@pimjo.com" class="text-blue-500 hover:underline">randomuser@pimjo.com</a>
+            </div>
+            <div>
+                <span class="font-medium">Phone</span><br>+09 363 398 46
+            </div>
+            <div>
+                <span class="font-medium">Bio</span><br>Team Manager
+            </div>
+        </div>
+    </div>
+
+    <!-- Address Information -->
+    <div class="bg-white p-6 rounded-lg shadow ">
+        <div class="flex justify-between items-center mb-4">
+            <h4 class="text-lg font-semibold">Address</h4>
+            <button onclick="showEditForm()" class="px-4 py-2 border rounded-md hover:bg-gray-100">Edit</button>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700 mb=5" >
+            <div>
+                <span class="font-medium">Country</span><br>United States
+            </div>
+            <div>
+                <span class="font-medium">City/State</span><br>Arizona, United States.
+            </div>
+         
+        </div>
+        <div class="mt-5">
+           
+                <span class="font-medium">Specifics address</span><br>501 Manawan , California.
+            
+
+        </div>
+    </div>
+</div>
+
+<!-- EDIT FORM (hidden by default) -->
+<div id="editForm" class="max-w-4xl mt-10 mx-auto bg-white rounded-xl shadow-md p-10 hidden">
+    <div class="flex justify-between items-start mb-6">
+        <div>
+            <h2 class="text-2xl font-semibold text-gray-800">Edit Personal Information</h2>
+            <p class="text-sm text-gray-500">Update your details to keep your profile up-to-date.</p>
+        </div>
+        <button onclick="hideEditForm()" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+    </div>
+
+    <!-- FORM FIELDS (same như trên, giữ nguyên code form bạn đã viết) -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4  mb-4">
+        <div>
+            <label class="block text-sm font-medium text-gray-600 mb-1">First Name</label>
+            <input type="text" class="w-full border rounded-md p-2" value="Musharof">
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-600 mb-1">Last Name</label>
+            <input type="text" class="w-full border rounded-md p-2" value="Chowdhury">
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-600 mb-1">Email Address</label>
+            <input type="email" class="w-full border rounded-md p-2" value="randomuser@pimjo.com">
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-600 mb-1">Phone</label>
+            <input type="text" class="w-full border rounded-md p-2" value="+09 363 398 46">
+        </div>
+    </div>
+    <div>
+        <label class="block text-sm font-medium text-gray-600 mb-1">Bio</label>
+        <input type="text" class="w-full border rounded-md p-2" value="Team Manager">
+    </div>
+
+    <!-- Address -->
+    <h3 class="text-lg font-medium text-gray-700 my-4">Address</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4  mb-4">
+        <div>
+            <label class="block text-sm font-medium text-gray-600 mb-1">Country</label>
+            <input type="text" class="w-full border rounded-md p-2" value="United States">
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-600 mb-1">City/State</label>
+            <input type="text" class="w-full border rounded-md p-2" value="Arizona, United States.">
+        </div>
+      
+    </div>
+    <div>
+        <label class="block text-sm font-medium text-gray-600 mb-1">Specifics address</label>
+        <input type="text" class="w-full border rounded-md p-2" value="501 Manawan , California.">
+    </div>
+
+    <!-- Buttons -->
+    <div class="mt-8 flex justify-end space-x-2">
+        <button onclick="hideEditForm()" class="px-4 py-2 rounded-md border border-gray-300 text-gray-600 hover:bg-gray-100">Close</button>
+        <button class="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700">Save Changes</button>
+    </div>
+</div>
+
+<script>
+      function showEditForm() {
+        document.getElementById('informationForm').classList.add('hidden');
+        document.getElementById('editForm').classList.remove('hidden');
+        window.scrollTo({ top: document.getElementById('editForm').offsetTop - 60, behavior: 'smooth' });
+    }
+
+    function hideEditForm() {
+        document.getElementById('informationForm').classList.remove('hidden');
+        document.getElementById('editForm').classList.add('hidden');
+    }
+</script>
