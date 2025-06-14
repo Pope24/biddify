@@ -1,6 +1,9 @@
+using Biddify.SignalR;
 using DataAccess;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Repository;
+using Repository.Impl;
 using Service;
 using Service.Impl;
 using System;
@@ -25,8 +28,14 @@ builder.Services.AddIdentity<UserEntity, IdentityRole>(options =>
     .AddEntityFrameworkStores<BiddifyDbContext>()
     .AddDefaultTokenProviders();
 
+//Add SignalR service to the container
+builder.Services.AddSignalR();
+
 //Dependency Injection
+builder.Services.AddScoped<IAuctionProductRepository, AuctionProductRepository>();
+
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IAuctionProductService, AuctionProductService>();
 
 builder.Services.AddRazorPages();
 
@@ -39,6 +48,7 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+app.MapHub<AuctionProductHub>("/AuctionProductHub");
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

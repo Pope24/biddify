@@ -13,7 +13,8 @@
              alt="Auction Banner" />
         <div class="banner-content">
             <h1 class="banner-title">Auction</h1>
-            <p class="banner-breadcrumb flex item-center"><a href="/" class="banner-link">
+            <p class="banner-breadcrumb flex item-center">
+                <a href="/" class="banner-link">
                     <span class="flex item-center justify-content-center gap-2">
                         Home
                     </span>
@@ -30,26 +31,26 @@
         @foreach (var item in Model.AuctionItems)
         {
             var timerId = $"timer-{item.Id}";
-            var endEpoch = ((DateTimeOffset)item.EndTimeUtc).ToUnixTimeMilliseconds();
+            var endEpoch = ((DateTimeOffset)DateTime.SpecifyKind(item.EndTime, DateTimeKind.Utc)).ToUnixTimeMilliseconds();
 
             <div class="auction-card">
                 <!-- title & price -->
                 <div class="card-header">
-                    <h2 class="item-title">@item.Name</h2>
-                    <p class="item-price">$@item.Price</p>
+                    <h2 class="item-title">@item.Title</h2>
+                    <p class="item-price">$@item.StartPrice</p>
                 </div>
 
                 <!-- image -->
                 <div class="card-image">
-                    <img src="@(item.ImageUrl)" alt="@item.Name" class="item-img" />
-                    <div class="item-id">ID: @item.Id</div>
+                    <img src="@(item.ImageUrls[0])" alt="@item.Title" class="item-img" />
                 </div>
 
                 <!-- bid info -->
                 <div class="card-bid-info">
                     <div>
                         <p class="bid-label">Current Bid</p>
-                        <p class="bid-value">$@item.CurrentBid</p>
+                        <p class="bid-value">$@item.StartPrice</p>
+                        <p class="bid-value">$@item.EndTime</p>
                     </div>
                     <div class="bid-timer">
                         <p id="@timerId" data-end="@endEpoch" class="timer-text">-- : -- : --</p>
@@ -84,6 +85,11 @@
 
             if (diff <= 0) {
                 document.getElementById(elementId).textContent = "00 : 00 : 00";
+                const label = document.getElementById(elementId).nextElementSibling;
+                if (label) {
+                    label.textContent = "Expired";
+                    label.classList.add("text-red-500", "font-semibold");
+                }
                 clearInterval(interval);
                 return;
             }
