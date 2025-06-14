@@ -13,5 +13,4 @@ namespace Domain.Enums
         Ended,
         Cancelled
     }
-
 }

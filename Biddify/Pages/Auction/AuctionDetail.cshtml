@@ -1,11 +1,12 @@
-﻿@page "/Auction/Details/{id:int}"
+﻿@page "/Auction/Details/{id}"
+@using Common
 @model Biddify.Pages.Auction.AuctionDetailModel
 @{
     ViewData["Title"] = "Auction Details";
     var item = Model.Item;
     Layout = "~/Pages/Shared/_Layout.cshtml";
     var timerId = $"timer-{item.Id}";
-    var endEpoch = ((DateTimeOffset)item.EndTimeUtc).ToUnixTimeMilliseconds();
+    var endEpoch = ((DateTimeOffset)DateTime.SpecifyKind(item.EndTime, DateTimeKind.Utc)).ToUnixTimeMilliseconds();
 }
 
 @section FullWidthHeader {
@@ -34,7 +35,7 @@
                 <div class="background-primary flex justify-content-between text-white rounded-lg p-4 mb-4">
                     <div>
                         <p class="text-sm">Current Bid</p>
-                        <p class="text-3xl font-bold">$@item.CurrentBid.ToString("N2")</p>
+                        <p class="text-3xl font-bold">$@item.StartPrice</p>
                     </div>
                     <div class="bid-timer">
                         <p id="@timerId" data-end="@endEpoch" class="timer-text">-- : -- : --</p>
@@ -43,7 +44,7 @@
                 <div class="relative">
                     <!-- Main Image -->
                     <div class="relative">
-                        <img id="main-image" src="https://demo-egenslab.b-cdn.net/html/bidgen/preview/assets/images/product/details11.png" alt="@item.Name" class="w-full h-[320px] object-contain rounded shadow" />
+                        <img id="main-image" src="@item.ImageUrls[0]" alt="@item.Title" class="w-full h-[320px] object-contain rounded shadow" />
                     </div>
 
                     <!-- Next and Prev buttons -->
@@ -57,10 +58,10 @@
 
                 <!-- Thumbnails -->
                 <div class="flex gap-2 mt-4">
-                    <img src="https://demo-egenslab.b-cdn.net/html/bidgen/preview/assets/images/product/details11.png" class="thumbnail w-16 h-16 object-cover rounded border cursor-pointer" data-index="0" />
-                    <img src="https://demo-egenslab.b-cdn.net/html/bidgen/preview/assets/images/product/details2.png" class="thumbnail w-16 h-16 object-cover rounded border cursor-pointer" data-index="1" />
-                    <img src="https://demo-egenslab.b-cdn.net/html/bidgen/preview/assets/images/product/details3.png" class="thumbnail w-16 h-16 object-cover rounded border cursor-pointer" data-index="2" />
-                    <img src="https://demo-egenslab.b-cdn.net/html/bidgen/preview/assets/images/product/details4.png" class="thumbnail w-16 h-16 object-cover rounded border cursor-pointer" data-index="3" />
+                    @foreach (string img in item.ImageUrls)
+                    {
+                        <img src="@img" class="thumbnail w-16 h-16 object-cover rounded border cursor-pointer" data-index="0" />
+                    }
                 </div>
 
                 <!-- Tabs -->
@@ -72,7 +73,7 @@
                     </div>
                     <div class="tab-content mt-4 text-gray-700 text-sm">
                         <div class="tab-panel" id="tab-desc">
-                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quis adipisci cumque eligendi, provident animi, totam.
+                            @item.Description
                         </div>
                         <div class="tab-panel hidden" id="tab-location">
                             Địa điểm: Hà Nội hoặc TP.HCM tùy theo người bán.
@@ -87,33 +88,27 @@
             <!-- RIGHT COLUMN -->
             <div class="bg-white rounded-lg p-6 shadow-lg">
                 <!-- Title + Description -->
-                <h2 class="text-2xl font-bold">@item.Name</h2>
-                <p class="text-gray-600 mt-2">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla finibus lobortis pulvinar.</p>
+                <h2 class="text-2xl font-bold">@item.Title</h2>
+                <p class="text-gray-600 mt-2">@item.Description</p>
 
                 <!-- Product Overview -->
                 <div class="mt-6">
                     <h3 class="text-lg font-semibold border-b pb-2 mb-4">Product Overview</h3>
                     <div class="grid grid-cols-2 gap-y-3 text-sm text-gray-800">
-                        <p><span class="font-semibold">Body Style:</span> Convertible</p>
-                        <p><span class="font-semibold">Transmission:</span> 6-Speed Manual</p>
-                        <p><span class="font-semibold">Drivetrain:</span> Rear Wheel Drive</p>
-                        <p><span class="font-semibold">Exteration:</span> Lime Gold Drive</p>
-                        <p><span class="font-semibold">Interior:</span> Agate Grey</p>
-                        <p><span class="font-semibold">Miles:</span> 12</p>
-                        <p><span class="font-semibold">Doors:</span> 2</p>
-                        <p><span class="font-semibold">Engine:</span> 2</p>
-                        <p><span class="font-semibold">Passengers:</span> Convertible</p>
-                        <p><span class="font-semibold">Fuel Mileage:</span> 3.4L mid engine V6</p>
-                        <p><span class="font-semibold">Fuel Type:</span> Petrol</p>
-                        <p><span class="font-semibold">Condition:</span> Brand New</p>
-                        <p><span class="font-semibold">Warranty:</span> 3 Years Limited</p>
+                        <p><span class="font-semibold">Start price:</span> $@item.StartPrice </p>
+                        <p><span class="font-semibold">Category:</span> @EnumHelper.ToDisplayString(item.CategoryProduct)</p>
+                        <p><span class="font-semibold">Minimum bid price:</span> $@item.MinBidPrice</p>
+                        <p><span class="font-semibold">Status:</span> @EnumHelper.ToDisplayString(item.Status)</p>
+                        <p><span class="font-semibold">Start time:</span> @item.StartTime.ToString("MM/dd/yyyy HH:mm:ss")</p>
+                        <p><span class="font-semibold">Seller:</span> @item.Seller.DisplayName</p>
+                        <p><span class="font-semibold">End time:</span> @item.EndTime.ToString("MM/dd/yyyy HH:mm:ss")</p>
                     </div>
                 </div>
 
                 <!-- Bid Form -->
                 <div class="mt-8 bg-gray-50 rounded p-4">
                     <h3 class="text-lg font-semibold mb-2">Bid Now</h3>
-                    <p class="text-sm text-gray-600 mb-4">Bid Amount: Minimum $20.00</p>
+                    <p class="text-sm text-gray-600 mb-4">Bid Amount: Minimum $@item.MinBidPrice</p>
                     <form>
                         <input type="number" placeholder="$00.00" class="w-full border px-3 py-2 rounded mb-4" />
                         <button class="w-full bg-black text-white py-2 rounded hover:bg-gray-800" type="submit">PLACE BID</button>
@@ -159,26 +154,26 @@
             @foreach (var auctionItem in Model.AuctionItems)
             {
                 var timerIdAuctionItem = $"timer-{auctionItem.Id}";
-                var endEpochAuctionItem = ((DateTimeOffset)auctionItem.EndTimeUtc).ToUnixTimeMilliseconds();
+                var endEpochAuctionItem = ((DateTimeOffset)DateTime.SpecifyKind(item.EndTime, DateTimeKind.Utc)).ToUnixTimeMilliseconds();
 
                 <div class="auction-card">
                     <!-- title & price -->
                     <div class="card-header">
-                        <h2 class="item-title">@auctionItem.Name</h2>
-                        <p class="item-price">$@auctionItem.Price</p>
+                        <h2 class="item-title">@auctionItem.Title</h2>
+                        <p class="item-price">$@auctionItem.StartPrice</p>
                     </div>
 
                     <!-- image -->
                     <div class="card-image">
-                        <img src="@(auctionItem.ImageUrl)" alt="@auctionItem.Name" class="item-img" />
-                        <div class="item-id">ID: @auctionItem.Id</div>
+                        <img src="@(auctionItem.ImageUrls[0])" alt="@auctionItem.Title" class="item-img" />
+                        @* <div class="item-id">ID: @auctionItem.Id</div> *@
                     </div>
 
                     <!-- bid info -->
                     <div class="card-bid-info">
                         <div>
                             <p class="bid-label">Current Bid</p>
-                            <p class="bid-value">$@auctionItem.CurrentBid</p>
+                            <p class="bid-value">$@auctionItem.StartPrice</p>
                         </div>
                         <div class="bid-timer">
                             <p id="@timerIdAuctionItem" data-end="@endEpochAuctionItem" class="timer-text">-- : -- : --</p>
