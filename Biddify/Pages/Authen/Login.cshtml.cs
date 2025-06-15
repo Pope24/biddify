@@ -32,10 +32,8 @@ namespace Biddify.Pages.Authen
                 if (res.Succeeded)
                 {
                     var user = await userManager.FindByEmailAsync(LoginViewModel.Email);
-                    //Check đã active account hay confirm email chưa
                     if (user.EmailConfirmed == false || user.Status == EUserStatus.Inactive)
                     {
-                        //Check đã verify email chưa
                         if (await emailService.IsEmailVerifiedAsync(user.Email))
                         {
                             user.EmailConfirmed = true;

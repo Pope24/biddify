@@ -10,44 +10,44 @@
     <link rel="stylesheet" href="~/biddify.styles.css" asp-append-version="true" />
     <script src="https://cdn.tailwindcss.com"></script>
     @* <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"> *@
-    
+
     <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
     <style>
         .navbar-dark .navbar-nav .nav-link {
-            color: rgba(255, 255, 255, 0.9);
+        color: rgba(255, 255, 255, 0.9);
         }
 
         .footer {
-            background-color: #0d0d0d;
-            color: white;
-            padding: 40px 0;
+        background-color: #0d0d0d;
+        color: white;
+        padding: 40px 0;
         }
 
-            .footer a {
-                color: #ccc;
-                text-decoration: none;
-            }
+        .footer a {
+        color: #ccc;
+        text-decoration: none;
+        }
 
-                .footer a:hover {
-                    text-decoration: underline;
-                }
+        .footer a:hover {
+        text-decoration: underline;
+        }
         .sticky-header {
-            position: fixed; 
-            top: 0;
-            left: 0;
-            width: 100%;
-            z-index: 1050;
-            transition: transform .35s ease-in-out, background-color .25s ease-in-out;
+        position: fixed; 
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 1050;
+        transition: transform .35s ease-in-out, background-color .25s ease-in-out;
         }
 
-            
-            .sticky-header.header--hidden {
-                transform: translateY(-100%);
-            }
+
+        .sticky-header.header--hidden {
+        transform: translateY(-100%);
+        }
 
         body {
-            padding-top: 72px; 
+        padding-top: 72px; 
         }
     </style>
 </head>
@@ -113,7 +113,7 @@
                     <!-- Search  -->
                     <form class="d-flex" style="width: 320px;" role="search">
                         <input class="form-control rounded-pill px-4" type="search"
-                               placeholder="Search your items" aria-label="Search">
+                        placeholder="Search your items" aria-label="Search">
                         <button class="btn btn-link text-white ms-n4" type="submit">
                             <i class="bi bi-search"></i>
                         </button>
@@ -122,18 +122,28 @@
 
                 <!-- Action icons (person & list) -->
                 <div class="d-flex align-items-center ms-3">
+                    @if (User.Identity.IsAuthenticated)
+                    {    
+                        <div>
+                            <span class="me-2">@User.Identity.Name.Split("@")[0]</span>
+                        </div>
+                    }
                     <!-- Person dropdown -->
                     <div class="dropdown me-3">
                         <a class="text-white fs-5 dropdown-toggle" href="#" role="button"
-                           id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
+                        id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="bi bi-person-circle"></i>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end shadow bg-dark text-white" aria-labelledby="userMenu">
-                            <li><a class="dropdown-item text-white" asp-page="/Profiles/MyProfile">My account</a></li>
-                            <li><a class="dropdown-item text-white" href="#">Settings</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item text-white" asp-page="/Authen/Login">Login</a></li>
-                            <li><a class="dropdown-item text-white" asp-page="/Authen/Register">Register</a></li>
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                <li><a class="dropdown-item text-white" asp-page="/Profiles/MyProfile">My account</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-white" href="/Logout">Logout</a></li>
+                            } else {
+                                <li><a class="dropdown-item text-white" asp-page="/Authen/Login">Login</a></li>
+                                <li><a class="dropdown-item text-white" asp-page="/Authen/Register">Register</a></li>
+                            }
                         </ul>
                     </div>
 

@@ -1,6 +1,4 @@
-﻿@{
-    Layout = null;
-}
+﻿@model DataAccess.UserEntity
 <div class="p-6 max-w-6xl mx-auto " id="informationForm">
  
 
@@ -12,8 +10,8 @@
             <div class="flex items-center space-x-4">
                 <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRhplEXPpWAYGxIkic17JzVWJVdgDyW16y8kw&s" class="w-20 h-20 rounded-full object-cover" alt="Profile Photo" />
                 <div>
-                    <h3 class="text-lg font-semibold">Musharof Chowdhury</h3>
-                    <p class="text-sm text-gray-500">Team Manager | Arizona, United States.</p>
+                    <h3 class="text-lg font-semibold">@Model.DisplayName</h3>
+                    <p class="text-sm text-gray-500">@Model.Email</p>
                 </div>
             </div>
             <div class="flex items-center space-x-3">
@@ -34,43 +32,20 @@
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700">
             <div>
-                <span class="font-medium">First Name</span><br>Chowdhury
+                <span class="font-medium">Display Name</span><br>@Model.DisplayName
             </div>
             <div>
-                <span class="font-medium">Last Name</span><br>Musharof
+                <span class="font-medium">Email</span><br>@Model.Email
             </div>
             <div>
-                <span class="font-medium">Email address</span><br><a href="mailto:randomuser@pimjo.com" class="text-blue-500 hover:underline">randomuser@pimjo.com</a>
+                <span class="font-medium">Account Status</span><br><a href="mailto:randomuser@pimjo.com" class="text-blue-500 hover:underline">@Model.Status</a>
             </div>
             <div>
-                <span class="font-medium">Phone</span><br>+09 363 398 46
+                <span class="font-medium">User Role</span><br>@Model.Role
             </div>
             <div>
-                <span class="font-medium">Bio</span><br>Team Manager
+                <span class="font-medium">Balance</span><br>@Model.Balance
             </div>
-        </div>
-    </div>
-
-    <!-- Address Information -->
-    <div class="bg-white p-6 rounded-lg shadow ">
-        <div class="flex justify-between items-center mb-4">
-            <h4 class="text-lg font-semibold">Address</h4>
-            <button onclick="showEditForm()" class="px-4 py-2 border rounded-md hover:bg-gray-100">Edit</button>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700 mb=5" >
-            <div>
-                <span class="font-medium">Country</span><br>United States
-            </div>
-            <div>
-                <span class="font-medium">City/State</span><br>Arizona, United States.
-            </div>
-         
-        </div>
-        <div class="mt-5">
-           
-                <span class="font-medium">Specifics address</span><br>501 Manawan , California.
-            
-
         </div>
     </div>
 </div>
@@ -88,43 +63,13 @@
     <!-- FORM FIELDS (same như trên, giữ nguyên code form bạn đã viết) -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4  mb-4">
         <div>
-            <label class="block text-sm font-medium text-gray-600 mb-1">First Name</label>
-            <input type="text" class="w-full border rounded-md p-2" value="Musharof">
-        </div>
-        <div>
-            <label class="block text-sm font-medium text-gray-600 mb-1">Last Name</label>
-            <input type="text" class="w-full border rounded-md p-2" value="Chowdhury">
+            <label class="block text-sm font-medium text-gray-600 mb-1">Display Name</label>
+            <input type="text" class="w-full border rounded-md p-2" value="@Model.DisplayName">
         </div>
         <div>
             <label class="block text-sm font-medium text-gray-600 mb-1">Email Address</label>
-            <input type="email" class="w-full border rounded-md p-2" value="randomuser@pimjo.com">
+            <input type="email" class="w-full border rounded-md p-2" value="@Model.Email">
         </div>
-        <div>
-            <label class="block text-sm font-medium text-gray-600 mb-1">Phone</label>
-            <input type="text" class="w-full border rounded-md p-2" value="+09 363 398 46">
-        </div>
-    </div>
-    <div>
-        <label class="block text-sm font-medium text-gray-600 mb-1">Bio</label>
-        <input type="text" class="w-full border rounded-md p-2" value="Team Manager">
-    </div>
-
-    <!-- Address -->
-    <h3 class="text-lg font-medium text-gray-700 my-4">Address</h3>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4  mb-4">
-        <div>
-            <label class="block text-sm font-medium text-gray-600 mb-1">Country</label>
-            <input type="text" class="w-full border rounded-md p-2" value="United States">
-        </div>
-        <div>
-            <label class="block text-sm font-medium text-gray-600 mb-1">City/State</label>
-            <input type="text" class="w-full border rounded-md p-2" value="Arizona, United States.">
-        </div>
-      
-    </div>
-    <div>
-        <label class="block text-sm font-medium text-gray-600 mb-1">Specifics address</label>
-        <input type="text" class="w-full border rounded-md p-2" value="501 Manawan , California.">
     </div>
 
     <!-- Buttons -->
