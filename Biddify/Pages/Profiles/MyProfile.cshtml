@@ -65,7 +65,7 @@
     <!-- Nội dung -->
     <div class="w-3/4 p-4" id="profile-content">
         @{
-            @await Html.PartialAsync("Partial/_ProfileInfor")
+            @await Html.PartialAsync("Partial/_ProfileInfor", Model.CurrentUser)
         }
     </div>
 </div>
