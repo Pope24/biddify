@@ -26,7 +26,11 @@ namespace Repository.Impl
 
         public async Task<AuctionProductEntity> GetAuctionProductByIdAsync(string id)
         {
-            return await dbContext.AuctionProducts.Where(p => p.Id == id).Include(p => p.Seller).FirstAsync();
+            return await dbContext.AuctionProducts.Where(p => p.Id == id)
+                .Include(p => p.Seller)
+                .Include(p => p.Bids)
+                .ThenInclude(b => b.Bidder)
+                .FirstAsync();
         }
 
         public async Task<IEnumerable<AuctionProductEntity>> GetAuctionProductsAsync(string search = "")
