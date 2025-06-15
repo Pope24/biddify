@@ -7,6 +7,11 @@
     Layout = "~/Pages/Shared/_Layout.cshtml";
     var timerId = $"timer-{item.Id}";
     var endEpoch = ((DateTimeOffset)DateTime.SpecifyKind(item.EndTime, DateTimeKind.Utc)).ToUnixTimeMilliseconds();
+    decimal currentPrice = item.Bids.Any()
+        ? item.Bids.OrderByDescending(b => b.Amount).First().Amount
+        : item.StartPrice;
+
+    decimal minBidPrice = item.MinBidPrice;
 }
 
 @section FullWidthHeader {
@@ -35,7 +40,9 @@
                 <div class="background-primary flex justify-content-between text-white rounded-lg p-4 mb-4">
                     <div>
                         <p class="text-sm">Current Bid</p>
-                        <p class="text-3xl font-bold">$@item.StartPrice</p>
+                        <p class="text-3xl font-bold" id="current-price" data-current="@currentPrice" data-minbid="@minBidPrice">
+                            $@currentPrice.ToString("#,##0.00")
+                        </p>
                     </div>
                     <div class="bid-timer">
                         <p id="@timerId" data-end="@endEpoch" class="timer-text">-- : -- : --</p>
@@ -95,9 +102,9 @@
                 <div class="mt-6">
                     <h3 class="text-lg font-semibold border-b pb-2 mb-4">Product Overview</h3>
                     <div class="grid grid-cols-2 gap-y-3 text-sm text-gray-800">
-                        <p><span class="font-semibold">Start price:</span> $@item.StartPrice </p>
+                        <p><span class="font-semibold">Start price:</span> $@item.StartPrice.ToString("#,##0.00")</p>
                         <p><span class="font-semibold">Category:</span> @EnumHelper.ToDisplayString(item.CategoryProduct)</p>
-                        <p><span class="font-semibold">Minimum bid price:</span> $@item.MinBidPrice</p>
+                        <p><span class="font-semibold">Minimum bid price:</span> $@item.MinBidPrice.ToString("#,##0.00")</p>
                         <p><span class="font-semibold">Status:</span> @EnumHelper.ToDisplayString(item.Status)</p>
                         <p><span class="font-semibold">Start time:</span> @item.StartTime.ToString("MM/dd/yyyy HH:mm:ss")</p>
                         <p><span class="font-semibold">Seller:</span> @item.Seller.DisplayName</p>
@@ -108,9 +115,11 @@
                 <!-- Bid Form -->
                 <div class="mt-8 bg-gray-50 rounded p-4">
                     <h3 class="text-lg font-semibold mb-2">Bid Now</h3>
-                    <p class="text-sm text-gray-600 mb-4">Bid Amount: Minimum $@item.MinBidPrice</p>
-                    <form>
-                        <input type="number" placeholder="$00.00" class="w-full border px-3 py-2 rounded mb-4" />
+                    <p class="text-sm text-gray-600 mb-4">Bid Amount: Minimum $@item.MinBidPrice.ToString("#,##0.00")</p>
+                    <form id="bid-form" asp-page-handler="Bid" method="post">
+                        <input type="number" id="bid-input" name="AmountBid" placeholder="$00.00" class="w-full border px-3 py-2 rounded mb-4" />
+                        <input type="hidden" name="ItemId" value="@item.Id" />
+                        <p class="text-sm text-red-600 hidden" id="error-message">Your bid must be at least $xxx</p>
                         <button class="w-full bg-black text-white py-2 rounded hover:bg-gray-800" type="submit">PLACE BID</button>
                     </form>
                 </div>
@@ -118,27 +127,26 @@
                 <div class="bg-white rounded-lg p-6 shadow-lg mb-6 mt-6">
                     <h2 class="text-2xl font-bold">BIDDING HISTORY — —</h2>
                     <div class="mt-4">
-                        <div class="flex items-center mb-4">
-                            <img src="https://via.placeholder.com/40" alt="Robart Fox" class="w-10 h-10 rounded-full mr-3">
-                            <div>
-                                <p class="font-semibold">Robart FOX</p>
-                                <p class="text-gray-600">Bid 23 minutes ago for 24.5$</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center mb-4">
-                            <img src="https://via.placeholder.com/40" alt="Leslie Alexander" class="w-10 h-10 rounded-full mr-3">
-                            <div>
-                                <p class="font-semibold">Leslie Alexander</p>
-                                <p class="text-gray-600">Bid 23 minutes ago for 24.5$</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center">
-                            <img src="https://via.placeholder.com/40" alt="Jane Cooper" class="w-10 h-10 rounded-full mr-3">
-                            <div>
-                                <p class="font-semibold">Jane Cooper</p>
-                                <p class="text-gray-600">Bid 23 minutes ago for 24.5$</p>
-                            </div>
-                        </div>
+                        @if (item.Bids.Count() == 0)
+                        {
+                            <p class="font-semibold">Have no auction history yet</p>
+                        }
+                        else
+                        {
+                            foreach (var bid in item.Bids.OrderByDescending(b => b.CreatedAt))
+                            {
+                                <div class="flex items-center mb-4">
+                                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRhplEXPpWAYGxIkic17JzVWJVdgDyW16y8kw&s" alt="@bid.Bidder.UserName" class="w-10 h-10 rounded-full mr-3">
+                                    <div>
+                                        <p class="font-semibold">@bid.Bidder.DisplayName</p>
+                                        <p class="text-gray-600">
+                                            @bid.CreatedAt.ToString("dd/MM/yyyy HH:mm:ss") -
+                                            <span class="font-semibold">$@bid.Amount.ToString("#,##0.00")</span>
+                                        </p>
+                                    </div>
+                                </div>
+                            }
+                        }
                     </div>
                 </div>
 
@@ -160,7 +168,7 @@
                     <!-- title & price -->
                     <div class="card-header">
                         <h2 class="item-title">@auctionItem.Title</h2>
-                        <p class="item-price">$@auctionItem.StartPrice</p>
+                        <p class="item-price">$@auctionItem.StartPrice.ToString("#,##0.00")</p>
                     </div>
 
                     <!-- image -->
@@ -173,7 +181,7 @@
                     <div class="card-bid-info">
                         <div>
                             <p class="bid-label">Current Bid</p>
-                            <p class="bid-value">$@auctionItem.StartPrice</p>
+                            <p class="bid-value">$@auctionItem.StartPrice.ToString("#,##0.00")</p>
                         </div>
                         <div class="bid-timer">
                             <p id="@timerIdAuctionItem" data-end="@endEpochAuctionItem" class="timer-text">-- : -- : --</p>
@@ -191,9 +199,103 @@
         </div>
     </div>
 </div>
+<!-- Confirmation Modal -->
+<div id="confirmBidModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+    <div class="bg-white p-6 rounded shadow-lg w-96">
+        <h2 class="text-xl font-semibold mb-4">Confirm Your Bid</h2>
+        <p class="mb-4">Are you sure you want to place this bid?</p>
+        <div class="flex justify-end gap-2">
+            <button id="cancelBidBtn" class="bg-gray-300 hover:bg-gray-400 text-black px-4 py-2 rounded">Cancel</button>
+            <button id="confirmBidBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">Confirm</button>
+        </div>
+    </div>
+</div>
 
-<!-- Countdown Script + Tabs Script -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
 <script>
+    @* ChinhLV - SignalR listen add new bid event *@
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/BidHub")
+        .build();
+
+    connection.on("ReceiveBidAdd", function (itemId) {
+        const currentItemId = "@item.Id";
+        if (itemId === currentItemId) {
+        fetch(`/Auction/Details/@item.Id?handler=BidInfo`)
+            .then(res => res.json())
+            .then(data => {
+                // Cập nhật giá hiện tại
+                const priceEl = document.getElementById("current-price");
+                priceEl.textContent = `$${data.current}`;
+                priceEl.dataset.current = data.current;
+
+                // Cập nhật bidding history
+                const historyEl = document.querySelector(".bg-white.rounded-lg.p-6.shadow-lg.mb-6.mt-6 .mt-4");
+                historyEl.innerHTML = "";
+
+                if (data.bids.length === 0) {
+                    historyEl.innerHTML = `<p class="font-semibold">Have no auction history yet</p>`;
+                } else {
+                    data.bids.forEach(bid => {
+                        historyEl.innerHTML += `
+                            <div class="flex items-center mb-4">
+                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRhplEXPpWAYGxIkic17JzVWJVdgDyW16y8kw&s" class="w-10 h-10 rounded-full mr-3">
+                                <div>
+                                    <p class="font-semibold">${bid.name}</p>
+                                    <p class="text-gray-600">
+                                        ${bid.created} - <span class="font-semibold">$${bid.amount}</span>
+                                    </p>
+                                </div>
+                            </div>`;
+                    });
+                }
+
+                console.log("Updated client without reloading.");
+            })
+            .catch(err => console.error("Failed to fetch updated bid:", err));
+    }
+    });
+
+    connection.start().catch(err => console.error(err.toString()));
+
+    @* ChinhLV - Validate trước khi submit bid *@
+    document.getElementById("bid-form").addEventListener("submit", function (e) {
+        const bidInput = document.getElementById("bid-input");
+        const errorMessage = document.getElementById("error-message");
+        const priceElement = document.getElementById("current-price");
+
+        const current = parseFloat(priceElement.dataset.current);
+        const minBid = parseFloat(priceElement.dataset.minbid);
+        const requiredMin = current + minBid;
+
+        const entered = parseFloat(bidInput.value);
+
+        if (isNaN(entered) || entered < requiredMin) {
+            e.preventDefault();
+            errorMessage.textContent = `Your bid must be at least $${requiredMin.toFixed(2)}`;
+            errorMessage.classList.remove("hidden");
+            bidInput.classList.add("border-red-500");
+        } else {
+            e.preventDefault();
+            errorMessage.classList.add("hidden");
+            bidInput.classList.remove("border-red-500");
+
+            document.getElementById("confirmBidModal").classList.remove("hidden");
+        }
+
+    });
+    @* Xác nhận bid modal *@
+        document.getElementById("cancelBidBtn").addEventListener("click", function () {
+        document.getElementById("confirmBidModal").classList.add("hidden");
+    });
+
+    document.getElementById("confirmBidBtn").addEventListener("click", function () {
+        document.getElementById("confirmBidModal").classList.add("hidden");
+        document.getElementById("bid-form").submit();
+    });
+
+
     document.addEventListener('DOMContentLoaded', () => {
         // Countdown
         document.querySelectorAll('[data-end]').forEach(el => {
