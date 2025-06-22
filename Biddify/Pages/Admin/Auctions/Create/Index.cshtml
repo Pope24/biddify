@@ -1,0 +1,330 @@
+@page
+@model Biddify.Pages.Admin.Auctions.Create.IndexModel
+@using Domain.Enums
+@{
+    ViewData["Title"] = "Create New Auction";
+    Layout = "_AdminLayout";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/create-auction.css" />
+}
+
+<div class="max-w-4xl mx-auto py-6">
+    <div class="flex items-center justify-between mb-6">
+        <h1 class="text-2xl font-bold text-gray-800">Create New Auction</h1>
+        <a asp-page="/Admin/Auctions/Index" class="text-gray-600 hover:text-gray-800 flex items-center gap-2">
+            <i data-lucide="arrow-left" class="w-5 h-5"></i>
+            Back to List
+        </a>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" class="bg-white rounded-xl shadow-sm border p-8 space-y-8">
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div asp-validation-summary="All" class="text-red-500 text-sm mb-4 bg-red-50 p-4 rounded-lg"></div>
+        }
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Title -->
+            <div class="col-span-2">
+                <label asp-for="AuctionInput.Title" class="form-label">Title</label>
+                <input asp-for="AuctionInput.Title" 
+                       class="form-input" 
+                       placeholder="Enter the auction title"
+                       required />
+                <span asp-validation-for="AuctionInput.Title" class="text-red-500 text-sm mt-1 block"></span>
+                <p class="form-hint">Choose a clear and descriptive title for your auction</p>
+            </div>
+
+            <!-- Description -->
+            <div class="col-span-2">
+                <label asp-for="AuctionInput.Description" class="form-label">Description</label>
+                <textarea asp-for="AuctionInput.Description" 
+                         rows="4" 
+                         class="form-textarea"
+                         placeholder="Provide detailed description of the item"
+                         required></textarea>
+                <span asp-validation-for="AuctionInput.Description" class="text-red-500 text-sm mt-1 block"></span>
+                <p class="form-hint">Include important details about condition, features, and any special notes</p>
+            </div>
+
+            <!-- Category -->
+            <div>
+                <label asp-for="AuctionInput.CategoryProduct" class="form-label">Category</label>
+                <select asp-for="AuctionInput.CategoryProduct" 
+                        asp-items="Html.GetEnumSelectList<ECategoryProduct>()"
+                        class="form-select"
+                        required>
+                    <option value="">Select a category</option>
+                </select>
+                <span asp-validation-for="AuctionInput.CategoryProduct" class="text-red-500 text-sm mt-1 block"></span>
+                <p class="form-hint">Choose the most appropriate category for your item</p>
+            </div>
+
+            <!-- Start Price -->
+            <div>
+                <label asp-for="AuctionInput.StartPrice" class="form-label">Start Price ($)</label>
+                <div class="relative">
+                    <input asp-for="AuctionInput.StartPrice" 
+                           type="number" 
+                           step="0.01" 
+                           min="0" 
+                           class="form-input pl-8"
+                           placeholder="0.00"
+                           required />
+                </div>
+                <span asp-validation-for="AuctionInput.StartPrice" class="text-red-500 text-sm mt-1 block"></span>
+                <p class="form-hint">Set an attractive starting price for your auction</p>
+            </div>
+
+            <!-- Min Bid Price -->
+            <div>
+                <label asp-for="AuctionInput.MinBidPrice" class="form-label">Minimum Bid Amount ($)</label>
+                <div class="relative">
+                    <input asp-for="AuctionInput.MinBidPrice" 
+                           type="number" 
+                           step="0.01" 
+                           min="0" 
+                           class="form-input pl-8"
+                           placeholder="0.00"
+                           required />
+                </div>
+                <span asp-validation-for="AuctionInput.MinBidPrice" class="text-red-500 text-sm mt-1 block"></span>
+                <p class="form-hint">Minimum amount that must be added to the current bid</p>
+            </div>
+
+            <!-- Start Time -->
+            <div>
+                <label asp-for="AuctionInput.StartTime" class="form-label">Start Time</label>
+                <input asp-for="AuctionInput.StartTime" 
+                       type="datetime-local" 
+                       class="form-input"
+                       required />
+                <span asp-validation-for="AuctionInput.StartTime" class="text-red-500 text-sm mt-1 block"></span>
+                <p class="form-hint">When should the auction begin?</p>
+            </div>
+
+            <!-- End Time -->
+            <div>
+                <label asp-for="AuctionInput.EndTime" class="form-label">End Time</label>
+                <input asp-for="AuctionInput.EndTime" 
+                       type="datetime-local" 
+                       class="form-input"
+                       required />
+                <span asp-validation-for="AuctionInput.EndTime" class="text-red-500 text-sm mt-1 block"></span>
+                <p class="form-hint">When should the auction end?</p>
+            </div>
+
+            <!-- Image Upload -->
+            <div class="col-span-2">
+                <label class="form-label">Product Images</label>
+                <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-blue-400 transition-colors duration-200 group cursor-pointer">
+                    <div class="space-y-2 text-center">
+                        <i data-lucide="image-plus" class="mx-auto h-12 w-12 text-gray-400 group-hover:text-blue-500 transition-colors duration-200"></i>
+                        <div class="flex text-sm text-gray-600">
+                            <label for="images" class="relative cursor-pointer rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2">
+                                <span>Upload images</span>
+                                <input id="images" name="images" type="file" class="sr-only" multiple accept="image/*" required />
+                            </label>
+                            <p class="pl-1">or drag and drop</p>
+                        </div>
+                        <p class="text-xs text-gray-500">PNG, JPG, GIF up to 10MB each</p>
+                    </div>
+                </div>
+                <div id="imagePreview" class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4"></div>
+                <p class="form-hint">Upload clear, high-quality images of your item from different angles</p>
+            </div>
+        </div>
+
+        <div class="flex justify-end space-x-4 pt-6 border-t">
+            <a asp-page="/Admin/Auctions/Index" 
+               class="px-6 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors duration-200">
+                Cancel
+            </a>
+            <button type="submit" 
+                    class="px-6 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
+                Create Auction
+            </button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            lucide.createIcons();
+
+            // Image preview with enhanced UI
+            const imageInput = document.getElementById('images');
+            const imagePreview = document.getElementById('imagePreview');
+            const dropZone = document.querySelector('div.border-dashed');
+            let selectedFiles = new DataTransfer(); // Store selected files
+
+            // Drag and drop handling
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, preventDefaults, false);
+            });
+
+            function preventDefaults (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropZone.addEventListener(eventName, highlight, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, unhighlight, false);
+            });
+
+            function highlight(e) {
+                dropZone.classList.add('border-blue-500', 'bg-blue-50');
+            }
+
+            function unhighlight(e) {
+                dropZone.classList.remove('border-blue-500', 'bg-blue-50');
+            }
+
+            dropZone.addEventListener('drop', handleDrop, false);
+
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                handleFiles(dt.files);
+            }
+
+            function handleFiles(files) {
+                // Add new files to existing selection
+                Array.from(files).forEach(file => {
+                    // Check if file is an image and not already selected
+                    if (file.type.startsWith('image/') && !isFileSelected(file)) {
+                        selectedFiles.items.add(file);
+                    }
+                });
+                
+                // Update the input's files
+                imageInput.files = selectedFiles.files;
+                updateImagePreview();
+            }
+
+            function isFileSelected(newFile) {
+                return Array.from(selectedFiles.files).some(file => 
+                    file.name === newFile.name && 
+                    file.size === newFile.size && 
+                    file.type === newFile.type
+                );
+            }
+
+            // Enhanced image preview
+            function updateImagePreview() {
+                imagePreview.innerHTML = '';
+                Array.from(selectedFiles.files).forEach((file, index) => {
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const div = document.createElement('div');
+                            div.className = 'relative aspect-square group';
+                            div.innerHTML = `
+                                <img src="${e.target.result}" class="w-full h-full object-cover rounded-lg shadow-sm" />
+                                <div class="absolute inset-0 bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-lg flex items-center justify-center">
+                                    <button type="button" 
+                                            class="text-white hover:text-red-400 transition-colors duration-200"
+                                            onclick="removeImage(${index})">
+                                        <i data-lucide="trash-2" class="w-6 h-6"></i>
+                                    </button>
+                                </div>
+                            `;
+                            imagePreview.appendChild(div);
+                            lucide.createIcons();
+                        }
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+
+            // Remove image function
+            window.removeImage = function(index) {
+                const dt = new DataTransfer();
+                const files = Array.from(selectedFiles.files);
+                
+                // Add all files except the one being removed
+                files.forEach((file, i) => {
+                    if (i !== index) dt.items.add(file);
+                });
+                
+                selectedFiles = dt;
+                imageInput.files = selectedFiles.files;
+                updateImagePreview();
+            };
+
+            // Handle file input change
+            imageInput.addEventListener('change', function(e) {
+                handleFiles(this.files);
+            });
+
+            // Validate dates
+            const startTimeInput = document.querySelector('[asp-for="AuctionInput.StartTime"]');
+            const endTimeInput = document.querySelector('[asp-for="AuctionInput.EndTime"]');
+
+            function validateDates() {
+                const startTime = new Date(startTimeInput.value);
+                const endTime = new Date(endTimeInput.value);
+                const now = new Date();
+                
+                // Clear previous custom validity
+                startTimeInput.setCustomValidity('');
+                endTimeInput.setCustomValidity('');
+                startTimeInput.classList.remove('border-red-500');
+                endTimeInput.classList.remove('border-red-500');
+
+                if (startTimeInput.value && startTime < now) {
+                    startTimeInput.setCustomValidity('Start time must be in the future');
+                    startTimeInput.classList.add('border-red-500');
+                } 
+                
+                if (startTimeInput.value && endTimeInput.value && endTime <= startTime) {
+                    endTimeInput.setCustomValidity('End time must be after start time');
+                    endTimeInput.classList.add('border-red-500');
+                }
+            }
+
+            startTimeInput.addEventListener('input', validateDates);
+            endTimeInput.addEventListener('input', validateDates);
+
+            // Validate prices
+            const startPriceInput = document.querySelector('[asp-for="AuctionInput.StartPrice"]');
+            const minBidPriceInput = document.querySelector('[asp-for="AuctionInput.MinBidPrice"]');
+
+            function validatePrices() {
+                const startPrice = parseFloat(startPriceInput.value);
+                const minBidPrice = parseFloat(minBidPriceInput.value);
+
+                // Clear previous custom validity
+                minBidPriceInput.setCustomValidity('');
+                minBidPriceInput.classList.remove('border-red-500');
+
+                if (!isNaN(startPrice) && !isNaN(minBidPrice) && minBidPrice >= startPrice) {
+                    minBidPriceInput.setCustomValidity('Minimum bid must be less than start price.');
+                    minBidPriceInput.classList.add('border-red-500');
+                }
+            }
+
+            startPriceInput.addEventListener('input', validatePrices);
+            minBidPriceInput.addEventListener('input', validatePrices);
+
+            // Set minimum date-time to now
+            const now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            const nowString = now.toISOString().slice(0, 16);
+            startTimeInput.min = nowString;
+            endTimeInput.min = nowString;
+
+            // Initial validation call
+            validateDates();
+            validatePrices();
+        });
+    </script>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 

@@ -1,0 +1,86 @@
+.form-input {
+    width: 100%;
+    border-radius: 0.5rem;
+    border: 1px solid #E5E7EB;
+    padding: 0.625rem 1rem;
+    color: #374151;
+    background-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    transition: all 200ms;
+}
+
+.form-input:focus {
+    border-color: #3B82F6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    outline: none;
+}
+
+.form-input::placeholder {
+    color: #9CA3AF;
+}
+
+.form-input:disabled {
+    background-color: #F9FAFB;
+    cursor: not-allowed;
+}
+
+.form-select {
+    width: 100%;
+    border-radius: 0.5rem;
+    border: 1px solid #E5E7EB;
+    padding: 0.625rem 1rem;
+    padding-right: 2.5rem;
+    color: #374151;
+    background-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236B7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.5rem center;
+    background-size: 1.5rem;
+    transition: all 200ms;
+}
+
+.form-select:focus {
+    border-color: #3B82F6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    outline: none;
+}
+
+.form-textarea {
+    width: 100%;
+    border-radius: 0.5rem;
+    border: 1px solid #E5E7EB;
+    padding: 0.625rem 1rem;
+    color: #374151;
+    background-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    resize: none;
+    transition: all 200ms;
+}
+
+.form-textarea:focus {
+    border-color: #3B82F6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    outline: none;
+}
+
+.form-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 0.375rem;
+}
+
+.form-hint {
+    margin-top: 0.375rem;
+    font-size: 0.75rem;
+    color: #6B7280;
+}
+
+.form-input.border-red-500,
+.form-select.border-red-500,
+.form-textarea.border-red-500 {
+    border-color: #EF4444;
+} 

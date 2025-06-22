@@ -1,0 +1,78 @@
+﻿@page
+@model Biddify.Pages.Admin.IndexModel
+@{
+    ViewData["Title"] = "Admin Dashboard";
+    Layout = "_AdminLayout";
+}
+
+<div class="space-y-6">
+    <!-- Title and Intro -->
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-800">Welcome, Admin 👋</h1>
+            <p class="text-gray-600 mt-1">Manage your auctions, users, and platform settings efficiently.</p>
+        </div>
+        <div class="text-sm text-gray-500">
+            <span class="font-medium">Current Time:</span> @DateTime.Now.ToString("dddd, MMM dd yyyy - hh:mm tt")
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        <a href="/admin/auctions" class="group p-5 bg-white rounded-xl shadow hover:shadow-md transition border border-gray-200">
+            <div class="flex items-center gap-4">
+                <div class="bg-blue-100 text-blue-600 p-3 rounded-full">
+                    <i data-lucide="gavel" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h3 class="font-semibold text-gray-800">Manage Auctions</h3>
+                    <p class="text-sm text-gray-500 group-hover:text-gray-700">Create, update and monitor auctions.</p>
+                </div>
+            </div>
+        </a>
+
+        <a href="/admin/users" class="group p-5 bg-white rounded-xl shadow hover:shadow-md transition border border-gray-200">
+            <div class="flex items-center gap-4">
+                <div class="bg-green-100 text-green-600 p-3 rounded-full">
+                    <i data-lucide="users" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h3 class="font-semibold text-gray-800">User Management</h3>
+                    <p class="text-sm text-gray-500 group-hover:text-gray-700">View and control user accounts.</p>
+                </div>
+            </div>
+        </a>
+
+        <a href="/admin/settings" class="group p-5 bg-white rounded-xl shadow hover:shadow-md transition border border-gray-200">
+            <div class="flex items-center gap-4">
+                <div class="bg-yellow-100 text-yellow-600 p-3 rounded-full">
+                    <i data-lucide="settings" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h3 class="font-semibold text-gray-800">Platform Settings</h3>
+                    <p class="text-sm text-gray-500 group-hover:text-gray-700">Configure system and preferences.</p>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <!-- Info Box -->
+    <div class="p-6 bg-white border border-gray-200 rounded-xl shadow-sm">
+        <h2 class="text-lg font-semibold text-gray-800 mb-2">Getting Started</h2>
+        <ul class="list-disc list-inside text-gray-600 space-y-1">
+            <li>Use the sidebar to navigate between dashboard sections.</li>
+            <li>Monitor auctions in real-time and manage sellers efficiently.</li>
+            <li>Keep user data secure and up-to-date.</li>
+            <li>Review activity logs and configure application settings.</li>
+        </ul>
+    </div>
+</div>
+
+<!-- Lucide icon init -->
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            lucide.createIcons();
+        });
+    </script>
+}
