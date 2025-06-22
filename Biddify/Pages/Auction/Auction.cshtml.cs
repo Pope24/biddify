@@ -18,7 +18,8 @@ public class AuctionModel : PageModel
 
     public async Task OnGetAsync()
     {
-        AuctionItems = (List<AuctionProductEntity>)await auctionProductService.GetAuctionProductsAsync();
+        AuctionItems =
+            (List<AuctionProductEntity>)await auctionProductService.GetAuctionProductsAsync();
     }
 
     public IActionResult OnPostSubmitBid(int ItemId)

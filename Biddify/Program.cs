@@ -1,3 +1,4 @@
+using System;
 using Biddify.SignalR;
 using DataAccess;
 using Microsoft.AspNetCore.Identity;
@@ -7,25 +8,26 @@ using Repository;
 using Repository.Impl;
 using Service;
 using Service.Impl;
-using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddDbContext<BiddifyDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
+);
 
-builder.Services.AddIdentity<UserEntity, IdentityRole>(options =>
-{
-    options.Password.RequireNonAlphanumeric = false;
-    options.Password.RequiredLength = 8;
-    options.Password.RequireUppercase = false;
-    options.Password.RequireLowercase = false;
-    options.User.RequireUniqueEmail = true;
-    options.SignIn.RequireConfirmedAccount = false;
-    options.SignIn.RequireConfirmedEmail = false;
-    options.SignIn.RequireConfirmedPhoneNumber = false;
-})
+builder
+    .Services.AddIdentity<UserEntity, IdentityRole>(options =>
+    {
+        options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequiredLength = 8;
+        options.Password.RequireUppercase = false;
+        options.Password.RequireLowercase = false;
+        options.User.RequireUniqueEmail = true;
+        options.SignIn.RequireConfirmedAccount = false;
+        options.SignIn.RequireConfirmedEmail = false;
+        options.SignIn.RequireConfirmedPhoneNumber = false;
+    })
     .AddEntityFrameworkStores<BiddifyDbContext>()
     .AddDefaultTokenProviders();
 //DI PayOS key
@@ -34,6 +36,13 @@ var apiKey = builder.Configuration["PayOS:ApiKey"];
 var checksumKey = builder.Configuration["PayOS:ChecksumKey"];
 
 builder.Services.AddSingleton(new PayOS(clientId, apiKey, checksumKey));
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Login";
+    options.LogoutPath = "/Logout";
+    options.AccessDeniedPath = "/Error";
+});
 
 //Add SignalR service to the container
 builder.Services.AddSignalR();
@@ -68,6 +77,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapRazorPages();

@@ -24,6 +24,19 @@ namespace Repository.Impl
             return true;
         }
 
+        public async Task<bool> DeleteAuctionProductAsync(string id)
+        {
+            var auctionProduct = await dbContext.AuctionProducts.FindAsync(id);
+            if (auctionProduct == null)
+            {
+                return false;
+            }
+
+            dbContext.AuctionProducts.Remove(auctionProduct);
+            var result = await dbContext.SaveChangesAsync();
+            return result > 0;
+        }
+
         public async Task<AuctionProductEntity> GetAuctionProductByIdAsync(string id)
         {
             return await dbContext.AuctionProducts.Where(p => p.Id == id)
@@ -39,6 +52,13 @@ namespace Repository.Impl
                 .Where(p => p.Title.Contains(search.Trim()))
                 .ToListAsync();
             return res;
+        }
+
+        public async Task<bool> UpdateAuctionProductAsync(AuctionProductEntity entity)
+        {
+            dbContext.AuctionProducts.Update(entity);
+            var result = await dbContext.SaveChangesAsync();
+            return result > 0;
         }
     }
 }

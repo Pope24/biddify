@@ -12,5 +12,7 @@ namespace Repository
         Task<IEnumerable<AuctionProductEntity>> GetAuctionProductsAsync(string search = "");
         Task<AuctionProductEntity> GetAuctionProductByIdAsync(string id);
         Task<bool> AddAuctionProductAsync(AuctionProductEntity entity);
+        Task<bool> UpdateAuctionProductAsync(AuctionProductEntity entity);
+        Task<bool> DeleteAuctionProductAsync(string id);
     }
 }

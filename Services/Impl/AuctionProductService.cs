@@ -31,5 +31,15 @@ namespace Service.Impl
         {
             return auctionProductRepository.GetAuctionProductsAsync(search);
         }
+
+        public Task<bool> UpdateAuctionProductAsync(AuctionProductEntity entity)
+        {
+            return auctionProductRepository.UpdateAuctionProductAsync(entity);
+        }
+
+        public Task<bool> DeleteAuctionProductAsync(string id)
+        {
+            return auctionProductRepository.DeleteAuctionProductAsync(id);
+        }
     }
 }
