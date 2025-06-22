@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="AWSSDK.SimpleEmail" Version="4.0.0.4" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.5" />
+    <PackageReference Include="payOS" Version="1.0.9" />
   </ItemGroup>
 
   <ItemGroup>
