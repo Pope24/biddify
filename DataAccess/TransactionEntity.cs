@@ -10,6 +10,7 @@ namespace DataAccess
     public class TransactionEntity
     {
         public string Id { get; set; }
+        public string TransactionCode { get; set; }
         public string UserId { get; set; }
         public UserEntity User { get; set; }
 
@@ -18,6 +19,5 @@ namespace DataAccess
         public ETransactionStatus Status { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public string? Note { get; set; }
     }
 }
