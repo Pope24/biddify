@@ -1,0 +1,44 @@
+﻿@page "/payment/response"
+@model Biddify.Pages.Payment.ResponseModel
+@{
+    ViewData["Title"] = "Payment Result";
+    var success = Model.Code;
+}
+
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="card shadow p-4" style="max-width: 500px; width: 100%;">
+        <div class="text-center mb-4">
+            @if (success == "00")
+            {
+                <img src="https://cdn-icons-png.flaticon.com/512/845/845646.png" width="80" />
+                <h3 class="mt-3 text-success">Payment Successful</h3>
+            }
+            else
+            {
+                <img src="https://cdn-icons-png.flaticon.com/512/463/463612.png" width="80" />
+                <h3 class="mt-3 text-danger">Payment Failed</h3>
+            }
+            <p>@Model.Message</p>
+        </div>
+
+        <div class="border-top pt-3">
+            <dl class="row">
+                <dt class="col-sm-5">Order Code:</dt>
+                <dd class="col-sm-7">@Model.OrderCode</dd>
+
+                <dt class="col-sm-5">Amount:</dt>
+                <dd class="col-sm-7">@($"{Model.Amount:N0} VND")</dd>
+
+                <dt class="col-sm-5">Status:</dt>
+                <dd class="col-sm-7">@(success == "00" ? "Success" : "Failed")</dd>
+
+                <dt class="col-sm-5">Transaction Time:</dt>
+                <dd class="col-sm-7">@Model.TransactionTime.ToString("dd/MM/yyyy HH:mm:ss")</dd>
+            </dl>
+        </div>
+
+        <div class="text-center mt-4">
+            <a class="btn btn-dark" href="/Profile">Back to Profile</a>
+        </div>
+    </div>
+</div>

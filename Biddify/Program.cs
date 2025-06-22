@@ -3,6 +3,7 @@ using Biddify.SignalR;
 using DataAccess;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Net.payOS;
 using Repository;
 using Repository.Impl;
 using Service;
@@ -29,6 +30,12 @@ builder
     })
     .AddEntityFrameworkStores<BiddifyDbContext>()
     .AddDefaultTokenProviders();
+//DI PayOS key
+var clientId = builder.Configuration["PayOS:ClientId"];
+var apiKey = builder.Configuration["PayOS:ApiKey"];
+var checksumKey = builder.Configuration["PayOS:ChecksumKey"];
+
+builder.Services.AddSingleton(new PayOS(clientId, apiKey, checksumKey));
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
@@ -42,9 +49,14 @@ builder.Services.AddSignalR();
 
 //Dependency Injection
 builder.Services.AddScoped<IAuctionProductRepository, AuctionProductRepository>();
+builder.Services.AddScoped<IBidRepository, BidRepository>();
+builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IAuctionProductService, AuctionProductService>();
+builder.Services.AddScoped<IBidService, BidService>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddScoped<ITransactionService, TransactionService>();
 
 builder.Services.AddRazorPages();
 
@@ -58,6 +70,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 app.MapHub<AuctionProductHub>("/AuctionProductHub");
+app.MapHub<BidHub>("/BidHub");
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

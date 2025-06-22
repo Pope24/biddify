@@ -2,19 +2,25 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Service;
 
 namespace Biddify.Pages.Profiles
 {
     public class MyProfileModel : PageModel
     {
         private readonly UserManager<UserEntity> _userManager;
-
+        private readonly IPaymentService paymentService;
+        private readonly IHttpContextAccessor _contextAccessor;
         public UserEntity CurrentUser { get; set; }
 
-        public MyProfileModel(UserManager<UserEntity> userManager)
+        public MyProfileModel(UserManager<UserEntity> userManager, IPaymentService _paymentService, IHttpContextAccessor contextAccessor)
         {
             _userManager = userManager;
+            paymentService = _paymentService;
+            _contextAccessor = contextAccessor;
         }
+        [BindProperty]
+        public decimal DepositAmount { get; set; }
 
         public async Task<IActionResult> OnGetAsync()
         {
@@ -40,6 +46,12 @@ namespace Biddify.Pages.Profiles
                     return Content("Không tìm thấy nội dung.");
             }
         }
-
+        public async Task<IActionResult> OnPostRequestDepositAsync()
+        {
+            string description = "Deposit via PayOS";
+            var request = _contextAccessor.HttpContext?.Request;
+            var checkoutUrl = await paymentService.CreatePaymentLinkOS(DepositAmount, description, $"{request?.Scheme}://{request?.Host}/payment/response");
+            return Redirect(checkoutUrl);
+        }
     }
 }

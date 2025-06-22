@@ -37,7 +37,7 @@
                 <!-- title & price -->
                 <div class="card-header">
                     <h2 class="item-title">@item.Title</h2>
-                    <p class="item-price">$@item.StartPrice</p>
+                    <p class="item-price">$@item.StartPrice.ToString("#,##0.00")</p>
                 </div>
 
                 <!-- image -->
@@ -49,7 +49,7 @@
                 <div class="card-bid-info">
                     <div>
                         <p class="bid-label">Current Bid</p>
-                        <p class="bid-value">$@item.StartPrice</p>
+                        <p class="bid-value">$@item.StartPrice.ToString("#,##0.00")</p>
                         <p class="bid-value">@item.EndTime</p>
                     </div>
                     <div class="bid-timer">

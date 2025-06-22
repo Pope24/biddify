@@ -17,8 +17,9 @@ namespace Domain.Enums
     public enum ETransactionStatus
     {
         Pending,
-        Completed,
-        Failed
+        Success,
+        Failed,
+        Cancelled
     }
 
 }

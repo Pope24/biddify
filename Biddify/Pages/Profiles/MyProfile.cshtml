@@ -67,7 +67,35 @@
         @{
             @await Html.PartialAsync("Partial/_ProfileInfor", Model.CurrentUser)
         }
+        <div class="mb-4 text-center">
+            <button class="bg-dark hover:bg-dark text-white font-bold py-2 px-4"
+                    data-bs-toggle="modal"
+                    data-bs-target="#topUpModal">
+                Deposit account
+            </button>
+        </div>
     </div>
+    <div class="modal fade" id="topUpModal" tabindex="-1" aria-labelledby="topUpModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" asp-page-handler="RequestDeposit">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="topUpModalLabel">Deposit into your account</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <label for="amount" class="form-label">Enter amount:</label>
+                        <input type="number" class="form-control" id="amount" name="DepositAmount" min="1" required />
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-dark">Confirm</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 @section Scripts {
