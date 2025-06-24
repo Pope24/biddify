@@ -12,6 +12,7 @@
         : item.StartPrice;
 
     decimal minBidPrice = item.MinBidPrice;
+
 }
 
 @section FullWidthHeader {
@@ -153,48 +154,80 @@
             </div>
         </div>
     </div>
+    <!-- Comment Section -->
+    <div class="bg-white rounded-lg p-6 shadow-lg mt-6" id="comment-section">
+        <h2 class="text-xl font-semibold mb-4">Live Comments</h2>
+
+        <!-- Danh sách bình luận -->
+        <div id="comment-list"
+             class="h-64 overflow-y-auto flex flex-col space-y-3 pr-2 border rounded p-3 bg-gray-50 text-sm scroll-smooth">
+            <!-- Các comment sẽ append vào đây -->
+        </div>
+
+        <!-- Load more -->
+        <div class="text-center mt-3">
+            <div id="load-more-comments"
+                    class="w-0 h-0 d-none">
+            </div>
+        </div>
+
+        <!-- Gửi bình luận -->
+        <div class="mt-4 flex items-start gap-2">
+            <textarea id="comment-input"
+                      rows="2"
+                      class="flex-1 border rounded px-3 py-2 text-sm resize-none"
+                      placeholder="Write a comment..."></textarea>
+            <button id="send-comment"
+                    class="bg-black text-white py-2 px-4 rounded hover:bg-gray-800 text-sm">
+                Send
+            </button>
+        </div>
+    </div>
+
 
     <!-- Related Auctions (Simple Card Style) -->
     <div class="mt-10">
         <h3 class="text-xl font-semibold mb-4">Related Auctions</h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-
-            @foreach (var auctionItem in Model.AuctionItems)
+            @if (Model.AuctionItems.Count() > 0)
             {
-                var timerIdAuctionItem = $"timer-{auctionItem.Id}";
-                var endEpochAuctionItem = ((DateTimeOffset)DateTime.SpecifyKind(item.EndTime, DateTimeKind.Utc)).ToUnixTimeMilliseconds();
+                foreach (var auctionItem in Model.AuctionItems)
+                {
+                    var timerIdAuctionItem = $"timer-{auctionItem.Id}";
+                    var endEpochAuctionItem = ((DateTimeOffset)DateTime.SpecifyKind(auctionItem.EndTime, DateTimeKind.Utc)).ToUnixTimeMilliseconds();
 
-                <div class="auction-card">
-                    <!-- title & price -->
-                    <div class="card-header">
-                        <h2 class="item-title">@auctionItem.Title</h2>
-                        <p class="item-price">$@auctionItem.StartPrice.ToString("#,##0.00")</p>
-                    </div>
-
-                    <!-- image -->
-                    <div class="card-image">
-                        <img src="@(auctionItem.ImageUrls[0])" alt="@auctionItem.Title" class="item-img" />
-                        @* <div class="item-id">ID: @auctionItem.Id</div> *@
-                    </div>
-
-                    <!-- bid info -->
-                    <div class="card-bid-info">
-                        <div>
-                            <p class="bid-label">Current Bid</p>
-                            <p class="bid-value">$@auctionItem.StartPrice.ToString("#,##0.00")</p>
+                    <div class="auction-card">
+                        <!-- title & price -->
+                        <div class="card-header">
+                            <h2 class="item-title">@auctionItem.Title</h2>
+                            <p class="item-price">$@auctionItem.StartPrice.ToString("#,##0.00")</p>
                         </div>
-                        <div class="bid-timer">
-                            <p id="@timerIdAuctionItem" data-end="@endEpochAuctionItem" class="timer-text">-- : -- : --</p>
-                            <p class="timer-label">Waiting For Bid</p>
+
+                        <!-- image -->
+                        <div class="card-image">
+                            <img src="@(auctionItem.ImageUrls[0])" alt="@auctionItem.Title" class="item-img" />
+                            @* <div class="item-id">ID: @auctionItem.Id</div> *@
                         </div>
+
+                        <!-- bid info -->
+                        <div class="card-bid-info">
+                            <div>
+                                <p class="bid-label">Current Bid</p>
+                                <p class="bid-value">$@auctionItem.StartPrice.ToString("#,##0.00")</p>
+                            </div>
+                            <div class="bid-timer">
+                                <p id="@timerIdAuctionItem" data-end="@endEpochAuctionItem" class="timer-text">-- : -- : --</p>
+                                <p class="timer-label">Waiting For Bid</p>
+                            </div>
+                        </div>
+
+                        <div class="submit-container">
+                            <a class="submit-btn btn btn-dark" href="/Auction/Details/@auctionItem.Id">Submit A Bid</a>
+                        </div>
+
                     </div>
 
-                    <div class="submit-container">
-                        <a class="submit-btn btn btn-dark" href="/Auction/Details/@auctionItem.Id">Submit A Bid</a>
-                    </div>
-
-                </div>
-
+                }
             }
         </div>
     </div>
@@ -379,4 +412,68 @@
         currentIndex = (currentIndex - 1 + thumbnails.length) % thumbnails.length;
         updateMainImage();
     });
+
+    @* GiangCM - connect signalR and lazy loading *@
+    const auctionId = "@item.Id";
+    const userName = "@(User.Identity?.Name ?? "Guest")";
+    let currentPage = 1;
+
+        if (auctionId && userName) {
+        const commentConnection = new signalR.HubConnectionBuilder()
+            .withUrl(`/CommentHub?auctionId=${auctionId}`)
+            .build();
+
+        commentConnection.on("ReceiveComment", (user, message, time) => {
+            appendComment(user, message, time);
+        });
+
+        commentConnection.start().catch(err => console.error(err.toString()));
+
+        document.getElementById("send-comment").addEventListener("click", () => {
+            const message = document.getElementById("comment-input").value;
+            if (message.trim() !== "") {
+                commentConnection.invoke("SendComment", auctionId, userName, message)
+                    .catch(err => console.error(err.toString()));
+                document.getElementById("comment-input").value = "";
+            }
+        });
+    }
+
+
+    document.getElementById("load-more-comments").addEventListener("click", () => {
+        loadComments(++currentPage);
+    });
+
+    function appendComment(user, message, time) {
+        const div = document.createElement("div");
+        div.innerHTML = `
+            <div class="bg-white border border-gray-200 rounded px-3 py-2 shadow text-gray-800">
+                <div class="flex justify-between items-center">
+                    <span class="font-semibold text-sm">${user}</span>
+                    <span class="text-xs text-gray-500">${time}</span>
+                </div>
+                <p class="text-sm mt-1">${message}</p>
+            </div>
+        `;
+
+        const list = document.getElementById("comment-list");
+        list.appendChild(div);
+
+        // Scroll xuống dòng mới nhất
+        list.scrollTop = list.scrollHeight;
+    }
+
+
+    function loadComments(page) {
+        fetch(`/Auction/Details/${auctionId}?handler=Comments&auctionId=${auctionId}&page=${page}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.length === 0) {
+                    document.getElementById("load-more-comments").disabled = true;
+                    document.getElementById("load-more-comments").innerText = "No more comments";
+                }
+                data.forEach(c => appendComment(c.user, c.message, c.createAt));
+            });
+    }
+    loadComments(currentPage);
 </script>

@@ -1,4 +1,5 @@
 ﻿using Biddify.SignalR;
+using Common;
 using DataAccess;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -15,12 +16,14 @@ public class AuctionDetailModel : PageModel
     private readonly UserManager<UserEntity> userManager;
     private readonly IBidService bidService;
     private readonly IHubContext<BidHub> bidHubContext;
-    public AuctionDetailModel(IAuctionProductService _auctionProductService, UserManager<UserEntity> _userManager, IBidService _bidService, IHubContext<BidHub> _bidHubContext)
+    private readonly ICommentService commentService;
+    public AuctionDetailModel(IAuctionProductService _auctionProductService, UserManager<UserEntity> _userManager, IBidService _bidService, IHubContext<BidHub> _bidHubContext, ICommentService _commentService)
     {
         this.auctionProductService = _auctionProductService;
         this.userManager = _userManager;
         this.bidService = _bidService;
         this.bidHubContext = _bidHubContext;
+        this.commentService = _commentService;
     }
 
     public AuctionProductEntity Item { get; set; }
@@ -75,5 +78,16 @@ public class AuctionDetailModel : PageModel
                 })
         });
     }
+    public async Task<IActionResult> OnGetCommentsAsync(string auctionId, int page = 1, int pageSize = 10)
+    {
+        var comments = (await commentService.GetCommentLazyLoadingAsync(auctionId, page, pageSize))
+            .Select(c => new
+            {
+                user = c.User.DisplayName,
+                message = c.Content,
+                createAt = DateTimeExtension.ConvertUtcToVNTime(c.CreatedAt).ToString("dd/MM/yyyy HH:mm:ss")
+            });
 
+        return new JsonResult(comments);
+    }
 }
