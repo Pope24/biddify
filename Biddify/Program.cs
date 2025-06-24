@@ -51,12 +51,14 @@ builder.Services.AddSignalR();
 builder.Services.AddScoped<IAuctionProductRepository, AuctionProductRepository>();
 builder.Services.AddScoped<IBidRepository, BidRepository>();
 builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
+builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IAuctionProductService, AuctionProductService>();
 builder.Services.AddScoped<IBidService, BidService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
+builder.Services.AddScoped<ICommentService, CommentService>();
 
 builder.Services.AddRazorPages();
 
@@ -71,6 +73,7 @@ if (!app.Environment.IsDevelopment())
 }
 app.MapHub<AuctionProductHub>("/AuctionProductHub");
 app.MapHub<BidHub>("/BidHub");
+app.MapHub<CommentHub>("/CommentHub");
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
