@@ -31,7 +31,6 @@ jobs:
       run: |
         cd ./Biddify
         npm install
-
     - name: Restore dependencies
       run: dotnet restore ./Biddify/Biddify.csproj
 
@@ -46,17 +45,15 @@ jobs:
 
     - name: Build Docker image
       run: |
-        docker build -t biddify-app -f ./Biddify/Dockerfile ./Biddify
+        docker build -t biddify-app -f ./Biddify/Dockerfile .
         docker tag biddify-app:latest ${{ secrets.ECR_REGISTRY }}/biddify-app:latest
-
     - name: Push Docker image to ECR
       run: |
         docker push ${{ secrets.ECR_REGISTRY }}/biddify-app:latest
-
     - name: Deploy to ECS
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
-        task-definition: ecs-task-def.json
+        task-definition: .github/workflows/ecs-task-def.json
         service: biddify-cluster-service
         cluster: biddify-cluster
         wait-for-service-stability: true
