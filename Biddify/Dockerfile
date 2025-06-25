@@ -13,6 +13,10 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Biddify/Biddify.csproj", "Biddify/"]
+COPY ["Common/Common.csproj", "Common/"]
+COPY ["DataAccess/DataAccess.csproj", "DataAccess/"]
+COPY ["Domain/Domain.csproj", "Domain/"]
+COPY ["Services/Services.csproj", "Services/"]
 RUN dotnet restore "./Biddify/Biddify.csproj"
 COPY . .
 WORKDIR "/src/Biddify"

@@ -18,6 +18,16 @@ jobs:
       with:
         dotnet-version: '8.0'
 
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20'
+
+    - name: Install npm dependencies
+      run: |
+        cd ./Biddify
+        npm install
+
     - name: Restore dependencies
       run: dotnet restore
 
@@ -36,7 +46,7 @@ jobs:
 
     - name: Build Docker image
       run: |
-        docker build -t biddify-app ./Biddify
+        docker build -t biddify-app .
         docker tag biddify-app:latest ${{ secrets.ECR_REGISTRY }}/biddify-app:latest
 
     - name: Push Docker image to ECR
