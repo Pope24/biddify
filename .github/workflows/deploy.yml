@@ -19,7 +19,7 @@ jobs:
         dotnet-version: '8.0'
 
     - name: Restore dependencies
-      run: dotnet restore ./Biddify/Biddify.csproj
+      run: dotnet restore
 
     - name: Build .NET Razor App
       run: dotnet build ./Biddify/Biddify.csproj --configuration Release
