@@ -4,6 +4,35 @@
     ViewData["Title"] = "MyProfile";
     Layout = "~/Pages/Shared/_Layout.cshtml";
 }
+<style>
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    input[type=number] {
+        -moz-appearance: textfield;
+    }
+
+   button:focus{
+        box-shadow: none !important;
+        border-color: inherit !important;
+        outline: none !important;
+   }
+   button:hover{
+        border-color: inherit !important;
+   }
+    input:focus {
+        box-shadow: none !important;
+        border-color: inherit !important;
+        outline: none !important;
+    }
+
+    input:hover {
+        border-color: inherit !important;
+    }
+</style>
 @section FullWidthHeader {
     <!-- Banner Section -->
     <div class="banner-wrapper">
@@ -83,9 +112,54 @@
                         <h5 class="modal-title" id="topUpModalLabel">Deposit into your account</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body">
-                        <label for="amount" class="form-label">Enter amount:</label>
-                        <input type="number" class="form-control" id="amount" name="DepositAmount" min="1" required />
+                    <div class="modal-body" style="background-color:#F9F9F9">
+                        <div class="flex justify-between">
+                            <div class="flex">
+                                <div class="mr-2 h-[48px] w-[48px] flex items-center justify-center bg-gray-100 rounded">
+                                    <span class="material-symbols-outlined text-[36px] leading-[1]">
+                                        account_balance
+                                    </span>
+                                </div>
+                                <div class="flex flex-col justify-center">
+                                    <div class="uppercase font-semibold">Bank Transfer</div>
+                                    <p class="text-sm text-gray-600">Limit deposit 1$ - 100000$</p>
+                                </div>
+                            </div>
+
+                            <div class="felx flex-col text-end">
+                                <div>Fee transaction:</div>
+                                <p class="text-sm">Free</p>
+                            </div>
+                        </div>
+                        <div class="border rounded px-4 py-4" style="background-color:#FFFFFF">
+                            <!-- Ô nhập tiền -->
+                            <div class="input-group border rounded p-2">
+                                <input oninput="updateVNDInput()" type="number" class="form-control border-0" placeholder="1 - 10000"
+                                       id="amount" name="DepositAmount" min="1" required />
+                                <span class="input-group-text bg-white border-0">$</span>
+                            </div>
+
+                            <div class="text-primary my-3 d-flex align-items-center">
+                                <span>=</span>
+                                <span class="ms-2" id="vndAmount">0 VND</span>
+                            </div>
+
+
+                            <div class="d-grid gap-2" style="grid-template-columns: repeat(4, 1fr);">
+                                <button class="btn btn-outline-dark" onclick="InputMoney(10)">10$</button>
+                                <button class="btn btn-outline-dark" onclick="InputMoney(20)">20$</button>
+                                <button class="btn btn-outline-dark" onclick="InputMoney(50)">50$</button>
+                                <button class="btn btn-outline-dark" onclick="InputMoney(100)">100$</button>
+                                <button class="btn btn-outline-dark" onclick="InputMoney(500)">500$</button>
+                                <button class="btn btn-outline-dark" onclick="InputMoney(1000)">1000$</button>
+                                <button class="btn btn-outline-dark" onclick="InputMoney(5000)">5000$</button>
+                                <button class="btn btn-outline-dark" onclick="InputMoney(10000)">10000$</button>
+                            </div>
+
+                        </div>
+
+                       
+                
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-dark">Confirm</button>
@@ -106,6 +180,66 @@
                 .then(html => {
                     document.getElementById('profile-content').innerHTML = html;
                 });
+        }
+
+
+
+
+
+       // RealTime money
+                const access_key = '28584fe567b15102cf5c394cfeb97954';
+        const endpoint = 'convert';
+        const from = 'USD';
+        const to = 'VND';
+
+        function InputMoney(amount) {
+              event.preventDefault();
+            const input = document.getElementById("amount");
+            input.value = amount;
+            updateVND(amount);
+        }
+
+        document.getElementById("amount").addEventListener("input", function () {
+            const value = parseFloat(this.value);
+            if (!isNaN(value)) {
+                updateVND(value);
+            } else {
+                document.getElementById("vndAmount").textContent = "0 VND";
+            }
+        });
+         function updateVNDInput(){
+         
+         const value = parseFloat(document.getElementById("amount").value);
+         if (!isNaN(value)) {
+             updateVND(value);
+         } else {
+             document.getElementById("vndAmount").textContent = "0 VND";
+         }
+         }
+
+        function updateVND(amount) {
+            $.ajax({
+                url: 'https://api.exchangerate.host/' + endpoint
+                    + '?access_key=' + access_key
+                    + '&from=' + from
+                    + '&to=' + to
+                    + '&amount=' + amount,
+                dataType: 'jsonp',
+                success: function (json) {
+                    if (json && json.result) {
+                        const vndAmount = json.result;
+                        document.getElementById("vndAmount").textContent =
+                            vndAmount.toLocaleString('vi-VN') + " VND";
+                    } else {
+                        document.getElementById("vndAmount").textContent = "0 VND";
+                        console.error("Dữ liệu không hợp lệ từ API");
+                    }
+                },
+                error: function (err) {
+                    console.error("Lỗi khi gọi API:", err);
+                    document.getElementById("vndAmount").textContent = "0 VND";
+                }
+            });
         }
     </script>
 }
