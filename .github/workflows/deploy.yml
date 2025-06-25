@@ -3,11 +3,15 @@ name: Deploy Biddify to AWS
 on:
   push:
     branches:
-      - ChinhLV
+      - Developer
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_REGION: ap-southeast-1
 
     steps:
     - name: Checkout code
@@ -39,14 +43,10 @@ jobs:
 
     - name: Login to Amazon ECR
       uses: aws-actions/amazon-ecr-login@v1
-      with:
-        region: ap-southeast-1
-        access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
     - name: Build Docker image
       run: |
-        docker build -t biddify-app .
+        docker build -t biddify-app -f ./Biddify/Dockerfile ./Biddify
         docker tag biddify-app:latest ${{ secrets.ECR_REGISTRY }}/biddify-app:latest
 
     - name: Push Docker image to ECR
