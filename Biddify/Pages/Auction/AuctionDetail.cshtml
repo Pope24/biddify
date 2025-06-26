@@ -12,7 +12,8 @@
         : item.StartPrice;
 
     decimal minBidPrice = item.MinBidPrice;
-
+    var errorMessage = TempData["AccessBidDetailError"]?.ToString();
+    var showErrorModal = !string.IsNullOrEmpty(errorMessage);
 }
 
 @section FullWidthHeader {
@@ -167,7 +168,7 @@
         <!-- Load more -->
         <div class="text-center mt-3">
             <div id="load-more-comments"
-                    class="w-0 h-0 d-none">
+                 class="w-0 h-0 d-none">
             </div>
         </div>
 
@@ -243,7 +244,45 @@
         </div>
     </div>
 </div>
-
+@if (showErrorModal)
+{
+    <div id="errorModal"
+         class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+         x-data="{ show: true }"
+         x-init="
+             $watch('show', value=>
+            value ? $el.classList.remove('hidden') : $el.classList.add('hidden'));
+            window.addEventListener('show-error-modal', e => {
+            document.getElementById('errorModalMessage').textContent = e.detail;
+            show = true;
+            });
+        "
+         x-show="show"
+         x-init="setTimeout(() => show = false, 5000)">
+        <div class="bg-white rounded-lg shadow-lg max-w-sm w-full p-6">
+            <div class="flex items-start justify-between">
+                <h3 class="text-lg font-semibold text-red-600">Access Error</h3>
+                <button class="text-gray-500 hover:text-gray-800" @@click="show = false">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                         viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div class="mt-4 text-gray-700" id="errorModalMessage">
+                @errorMessage
+            </div>
+            <div class="mt-6 text-right">
+                <button class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                        @@click="show = false">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+}
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
 <script>
@@ -426,6 +465,9 @@
         commentConnection.on("ReceiveComment", (user, message, time) => {
             appendComment(user, message, time);
         });
+        commentConnection.on("CommentError", (errorMessage) => {
+            showModalError(errorMessage);
+        });
 
         commentConnection.start().catch(err => console.error(err.toString()));
 
@@ -462,6 +504,13 @@
         // Scroll xuống dòng mới nhất
         list.scrollTop = list.scrollHeight;
     }
+        function showModalError(message) {
+        const event = new CustomEvent("show-error-modal", {
+            detail: message
+        });
+        window.dispatchEvent(event);
+    }
+
 
 
     function loadComments(page) {

@@ -1,5 +1,6 @@
 ﻿using Common;
 using DataAccess;
+using Domain.Enums;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using Service;
@@ -9,17 +10,35 @@ namespace Biddify.SignalR
     {
         private readonly ICommentService _commentService;
         private readonly UserManager<UserEntity> _userManager;
+        private readonly IAuctionProductService _auctionProductService;
 
-        public CommentHub(ICommentService commentService, UserManager<UserEntity> userManager)
+        public CommentHub(ICommentService commentService, UserManager<UserEntity> userManager, IAuctionProductService auctionProductService)
         {
             _commentService = commentService;
             _userManager = userManager;
+            _auctionProductService = auctionProductService;
         }
 
         public async Task SendComment(string auctionId, string userId, string message)
         {
             var user = await _userManager.FindByNameAsync(userId);
-            if (user == null) return;
+            if (user == null)
+            {
+                await Clients.Caller.SendAsync("CommentError", "User not found.");
+                return;
+            }
+            var auction = await _auctionProductService.GetAuctionProductByIdAsync(auctionId);
+            if (auction.Status != EAuctionStatus.Active)
+            {
+                await Clients.Caller.SendAsync("CommentError", $"Auction is in '{EnumHelper.ToDisplayString(auction.Status)}' status.");
+                return;
+            }
+            var now = DateTime.UtcNow;
+            if (now < auction.StartTime || now > auction.EndTime)
+            {
+                await Clients.Caller.SendAsync("CommentError", "Auction is not active at this time.");
+                return;
+            }
 
             var comment = new CommentEntity
             {
