@@ -1,12 +1,12 @@
 ﻿using Biddify.SignalR;
 using Common;
 using DataAccess;
+using Domain.Enums;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.SignalR;
 using Service;
-using System.Threading.Tasks;
 
 namespace Biddify.Pages.Auction;
 
@@ -29,12 +29,11 @@ public class AuctionDetailModel : PageModel
     public AuctionProductEntity Item { get; set; }
     public List<AuctionProductEntity> AuctionItems { get; set; }
 
-    public async Task OnGetAsync(string id)
+    public async Task<IActionResult> OnGetAsync(string id)
     {
         Item = await auctionProductService.GetAuctionProductByIdAsync(id);
-        var twoHours = DateTime.UtcNow.AddHours(2);
-
         AuctionItems = (List<AuctionProductEntity>)await auctionProductService.GetAuctionProductsAsync();
+        return Page();
     }
     public async Task<IActionResult> OnPostBidAsync(decimal AmountBid, string ItemId)
     {
@@ -42,13 +41,31 @@ public class AuctionDetailModel : PageModel
         if (user == null) return RedirectToPage("/Authen/Login");
 
         Item = await auctionProductService.GetAuctionProductByIdAsync(ItemId);
+        if (Item.Status != EAuctionStatus.Active)
+        {
+            TempData["AccessBidDetailError"] = $"Auction product is '{EnumHelper.ToDisplayString(Item.Status)}' status.";
+            return RedirectToPage();
+        }
+        var now = DateTime.UtcNow;
+
+        if (now < Item.StartTime || now > Item.EndTime)
+        {
+            TempData["AccessBidDetailError"] = "The product is not in the auction period time.";
+            return RedirectToPage();
+        }
+        var requiredFee = Item.StartPrice * 0.01m;
+        if (user.Balance < requiredFee)
+        {
+            TempData["AccessBidDetailError"] = $"You need at least {requiredFee:#,##0.00}$ (1%) to participate in the auction.";
+            return RedirectToPage();
+        }
         // Check amountBid có đúng không
         var currentPrice = Item.Bids.Count() == 0 ? Item.StartPrice : Item.Bids.OrderByDescending(b => b.Amount).First().Amount;
         var minBid = Item.MinBidPrice;
         if (AmountBid < currentPrice + minBid)
         {
-            ModelState.AddModelError(string.Empty, "Bid too low.");
-            return Page();
+            TempData["AccessBidDetailError"] = $"You need to bid at least {(currentPrice + minBid):#,##0.00}$.";
+            return RedirectToPage();
         }
 
         var newBid = new BidEntity
