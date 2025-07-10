@@ -1,0 +1,213 @@
+﻿
+@page
+@model Domain.Models.ChatMessageModel
+
+<!-- Nút tròn nổi để mở/tắt chat -->
+<button id="chatToggleBtn" onclick="toggleChat()" class="fixed bottom-4 right-4 z-50 rounded-full bg-purple-600 p-4 shadow-lg hover:bg-purple-700">
+    <span id="chatIcon" class="material-symbols-outlined text-white text-3xl">chat_bubble</span>
+</button>
+
+<!-- Khung chat chính -->
+<div id="chatBox" class="hidden fixed bottom-24 right-4 w-80 bg-white rounded-xl shadow-lg overflow-hidden z-50">
+    <div class="bg-blue-600 text-white px-4 py-3 font-semibold flex justify-between items-center">
+        Chat Hỗ Trợ
+        <button onclick="toggleChat()" class="text-white text-xl">&times;</button>
+    </div>
+
+    <div class="h-64 overflow-y-auto p-3 text-sm bg-gray-100" id="faqContainer">
+        <!-- Nội dung động -->
+    </div>
+
+    <div class="flex p-2 border-t">
+        <input type="text" id="chatInput" class="flex-grow px-2 py-1 border rounded-l hidden" placeholder="Nhập câu hỏi...">
+        <button onclick="sendMessage()" class="bg-blue-500 text-white px-3 rounded-r hidden" id="sendBtn">Gửi</button>
+    </div>
+</div>
+
+
+<script>
+    const CHAT_API = '/api/chatbot';
+    let state = {
+        level: 'root',
+        group: null
+    };
+
+    function toggleChat() {
+        const chatBox = document.getElementById('chatBox');
+        const icon = document.getElementById('chatIcon');
+        chatBox.classList.toggle('hidden');
+        icon.textContent = chatBox.classList.contains('hidden') ? 'chat_bubble' : 'close';
+
+        if (!chatBox.classList.contains('hidden')) {
+            loadRootMenu();
+        }
+    }
+
+    function loadRootMenu() {
+        state = { level: 'root', group: null };
+        const container = document.getElementById('faqContainer');
+        container.innerHTML = `
+            <div class="flex flex-col items-start space-y-2">
+                <button onclick="loadFaqTitles()" class="bg-gray-200 p-2 rounded">📚 FAQ Questions</button>
+                <button onclick="startAiChat()" class="bg-gray-200 p-2 rounded">🤖 Chat với AI</button>
+            </div>
+        `;
+        hideInput();
+    }
+
+    async function loadFaqTitles() {
+        try {
+            const response = await fetch(CHAT_API, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: 'faq_titles' })
+            });
+
+            if (!response.ok) {
+                const text = await response.text();
+                throw new Error(text);
+            }
+
+            const titles = await response.json();
+            state.level = 'group';
+
+            const container = document.getElementById('faqContainer');
+            container.innerHTML = `<div class="text-left mb-2"><button onclick="loadRootMenu()" class="text-blue-500">⬅ Quay lại</button></div>`;
+            titles.response.forEach(title => {
+                container.innerHTML += `
+                    <button onclick="loadQuestions('${title}')" class="w-full text-left bg-gray-100 mb-1 p-2 rounded">${title}</button>
+                `;
+            });
+
+            hideInput();
+        } catch (error) {
+            alert("Lỗi khi tải danh sách FAQ: " + error.message);
+            console.error(error);
+        }
+    }
+
+    async function loadQuestions(groupName) {
+        try {
+            state.level = 'question';
+            state.group = groupName;
+
+            const response = await fetch(CHAT_API, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: 'faq_get:' + groupName })
+            });
+
+            if (!response.ok) {
+                const text = await response.text();
+                throw new Error(text);
+            }
+
+            const result = await response.json();
+            const container = document.getElementById('faqContainer');
+            container.innerHTML = `<div class="text-left mb-2"><button onclick="loadFaqTitles()" class="text-blue-500">⬅ Quay lại</button></div>`;
+            result.response.forEach(item => {
+                if (!item?.question) return;
+                const safeQuestion = item.question.replace(/'/g, "\\'");
+                container.innerHTML += `
+                    <button onclick="showAnswer('${safeQuestion}')" class="w-full text-left bg-white border mb-1 p-2 rounded">${item.question}</button>
+                `;
+            });
+
+            hideInput();
+        } catch (error) {
+            alert("Lỗi khi tải câu hỏi: " + error.message);
+            console.error(error);
+        }
+    }
+
+    async function showAnswer(question) {
+        try {
+            const response = await fetch(CHAT_API, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: question })
+            });
+
+            if (!response.ok) {
+                const text = await response.text();
+                throw new Error(text);
+            }
+
+            const result = await response.json();
+            const container = document.getElementById('faqContainer');
+            container.innerHTML = `
+                <div class="text-left mb-2"><button onclick="loadQuestions('${state.group}')" class="text-blue-500">⬅ Quay lại</button></div>
+                <div class="mb-2 text-left"><strong>Câu hỏi:</strong> ${question}</div>
+                <div class="flex justify-start mb-2">
+                    <div class="bg-gray-200 text-gray-800 px-3 py-2 rounded-lg max-w-[80%]">
+                        <strong>Trả lời:</strong> ${result.response}
+                    </div>
+                </div>
+            `;
+            hideInput();
+        } catch (error) {
+            alert("Lỗi khi hiển thị câu trả lời: " + error.message);
+            console.error(error);
+        }
+    }
+
+    function startAiChat() {
+        state = { level: 'ai', group: null };
+        const container = document.getElementById('faqContainer');
+        container.innerHTML = `<div class="text-left mb-2"><button onclick="loadRootMenu()" class="text-blue-500">⬅ Quay lại</button></div>`;
+        showInput();
+    }
+
+    function showInput() {
+        document.getElementById('chatInput').classList.remove('hidden');
+        document.getElementById('sendBtn').classList.remove('hidden');
+    }
+
+    function hideInput() {
+        document.getElementById('chatInput').classList.add('hidden');
+        document.getElementById('sendBtn').classList.add('hidden');
+    }
+
+    async function sendMessage() {
+        const input = document.getElementById('chatInput');
+        const message = input.value.trim();
+        if (!message) return;
+
+        const container = document.getElementById('faqContainer');
+        container.innerHTML += `
+            <div class="flex justify-end mb-2">
+                <div class="bg-blue-500 text-white px-3 py-2 rounded-lg max-w-[80%]">${message}</div>
+            </div>
+        `;
+        input.value = "";
+
+        try {
+            const response = await fetch(CHAT_API, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message })
+            });
+
+            if (!response.ok) {
+                const text = await response.text();
+                throw new Error(text);
+            }
+
+            const result = await response.json();
+            container.innerHTML += `
+                <div class="flex justify-start mb-2">
+                    <div class="bg-gray-200 text-gray-800 px-3 py-2 rounded-lg max-w-[80%]">
+                        ${result.response}
+                    </div>
+                </div>
+            `;
+            container.lastElementChild?.scrollIntoView({ behavior: 'smooth' });
+        } catch (error) {
+            alert("Lỗi khi gửi tin nhắn: " + error.message);
+            console.error(error);
+        }
+    }
+
+    window.onload = loadRootMenu;
+</script>
+

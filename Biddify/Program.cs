@@ -52,15 +52,17 @@ builder.Services.AddScoped<IAuctionProductRepository, AuctionProductRepository>(
 builder.Services.AddScoped<IBidRepository, BidRepository>();
 builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
-
+builder.Services.AddHttpClient<AIService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IAuctionProductService, AuctionProductService>();
 builder.Services.AddScoped<IBidService, BidService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddScoped<ICommentService, CommentService>();
+builder.Services.AddScoped<FAQService>();
 
 builder.Services.AddRazorPages();
+builder.Services.AddControllers();
 
 var app = builder.Build();
 
@@ -82,7 +84,7 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
-
-app.MapRazorPages();
-
+    
+    app.MapRazorPages();
+    app.MapControllers();
 app.Run();

@@ -46,13 +46,13 @@ namespace Repository.Impl
                 .FirstAsync();
         }
 
-        public async Task<IEnumerable<AuctionProductEntity>> GetAuctionProductsAsync(string search = "")
-        {
-            var res = await dbContext.AuctionProducts
-                .Where(p => p.Title.Contains(search.Trim()))
-                .ToListAsync();
-            return res;
-        }
+            public async Task<IEnumerable<AuctionProductEntity>> GetAuctionProductsAsync(string search = "")
+            {
+                var res = await dbContext.AuctionProducts
+                    .Where(p => p.Title.Contains(search.Trim()))
+                    .ToListAsync();
+                return res;
+            }
 
         public async Task<bool> UpdateAuctionProductAsync(AuctionProductEntity entity)
         {
