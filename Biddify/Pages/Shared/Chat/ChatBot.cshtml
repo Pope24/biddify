@@ -3,26 +3,39 @@
 @model Domain.Models.ChatMessageModel
 
 <!-- Nút tròn nổi để mở/tắt chat -->
-<button id="chatToggleBtn" onclick="toggleChat()" class="fixed bottom-4 right-4 z-50 rounded-full bg-purple-600 p-4 shadow-lg hover:bg-purple-700">
+<!-- Nút mở/tắt chat -->
+<button id="chatToggleBtn"
+        onclick="toggleChat()"
+        class="w-[60px] h-[60px] fixed bottom-4 right-4 z-50 rounded-full bg-gray-700 shadow-xl hover:bg-black flex items-center justify-center">
     <span id="chatIcon" class="material-symbols-outlined text-white text-3xl">chat_bubble</span>
 </button>
 
 <!-- Khung chat chính -->
-<div id="chatBox" class="hidden fixed bottom-24 right-4 w-80 bg-white rounded-xl shadow-lg overflow-hidden z-50">
-    <div class="bg-blue-600 text-white px-4 py-3 font-semibold flex justify-between items-center">
-        Chat Hỗ Trợ
+<div id="chatBox"
+     class="hidden fixed bottom-24 right-4 w-1/4 min-w-[450px] h-[calc(100vh-200px)] bg-white rounded shadow-lg overflow-hidden z-50 flex flex-col">
+
+    <!-- Header -->
+    <div class="bg-gray-700 text-white px-4 py-3 font-semibold flex justify-between items-center">
+        Support Chat
         <button onclick="toggleChat()" class="text-white text-xl">&times;</button>
     </div>
 
-    <div class="h-64 overflow-y-auto p-3 text-sm bg-gray-100" id="faqContainer">
+    <!-- Nội dung -->
+    <div id="faqContainer" class="flex-1 overflow-y-auto p-4 text-sm bg-white ">
         <!-- Nội dung động -->
     </div>
 
-    <div class="flex p-2 border-t">
-        <input type="text" id="chatInput" class="flex-grow px-2 py-1 border rounded-l hidden" placeholder="Nhập câu hỏi...">
-        <button onclick="sendMessage()" class="bg-blue-500 text-white px-3 rounded-r hidden" id="sendBtn">Gửi</button>
+    <!-- Nhập liệu -->
+    <div id="inputChat" class="flex p-3 border-t hidden">
+
+        <input type="text" id="chatInput" class="flex-grow px-3 py-2 border rounded-l text-sm" placeholder="Nhập câu hỏi...">
+        <button onclick="sendMessage()" class="bg-blue-500 text-white px-4 rounded-r">Gửi</button>
     </div>
+
 </div>
+
+</div>
+
 
 
 <script>
@@ -47,36 +60,81 @@
         state = { level: 'root', group: null };
         const container = document.getElementById('faqContainer');
         container.innerHTML = `
-            <div class="flex flex-col items-start space-y-2">
-                <button onclick="loadFaqTitles()" class="bg-gray-200 p-2 rounded">📚 FAQ Questions</button>
-                <button onclick="startAiChat()" class="bg-gray-200 p-2 rounded">🤖 Chat với AI</button>
-            </div>
+      <!-- Phần chào hỏi -->
+    <div class="text-center text-black flex flex-col items-center justify-center mb-6 mt-6">
+        <div class="font-extrabold text-3xl flex items-center">
+            Hello   
+            <span class="material-symbols-outlined text-yellow-400 mb-1 ml-1">waving_hand</span>
+        </div>
+        <div class="text-gray-600 mt-1 text-base">How we can help you?</div>
+    </div>
+
+    <!-- Các nút lựa chọn -->
+    <div class="flex flex-col items-center space-y-4 mt-8">
+        <!-- Nút FAQ -->
+        <button onclick="loadFaqTitles()"
+            class="group flex items-center justify-between bg-white rounded-lg px-4 py-2 shadow-md hover:shadow-lg text-black cursor-pointer w-full max-w-sm transition-all duration-200 hover:text-purple-700">
+            <span class="font-semibold text-base">FAQ Questions</span>
+            <svg class="w-8 h-12 text-purple-600 ml-2 group-hover:text-purple-800" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M10 17l5-5-5-5v10z" />
+            </svg>
+        </button>
+
+        <!-- Nút Chat AI -->
+        <button onclick="startAiChat()"
+            class="group flex items-center justify-between bg-white rounded-lg px-4 py-2 shadow-md hover:shadow-lg text-black cursor-pointer w-full max-w-sm transition-all duration-200 hover:text-purple-700">
+            <span class="font-semibold text-base">Send message with AI</span>
+            <svg class="w-8 h-12 text-purple-600 ml-2 group-hover:text-purple-800" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M10 17l5-5-5-5v10z" />
+            </svg>
+        </button>
+    </div>
+
+
+
         `;
         hideInput();
     }
 
-    async function loadFaqTitles() {
+      
+
+
+          async function loadFaqTitles() {
         try {
+            const container = document.getElementById('faqContainer');
+            container.innerHTML = ''; // Xoá toàn bộ trước đó
+
+            // Bot hỏi: bạn muốn chọn chủ đề nào?
+            const botMsg = document.createElement('div');
+            botMsg.className = 'flex justify-start mb-2';
+            botMsg.innerHTML = `
+                <div class="bg-gray-100 text-gray-800 px-4 py-2 rounded-2xl max-w-[80%] text-sm">
+                    Bạn muốn chọn chủ đề nào?
+                </div>
+            `;
+            container.appendChild(botMsg);
+
             const response = await fetch(CHAT_API, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ message: 'faq_titles' })
             });
 
-            if (!response.ok) {
-                const text = await response.text();
-                throw new Error(text);
-            }
-
+            if (!response.ok) throw new Error(await response.text());
             const titles = await response.json();
             state.level = 'group';
 
-            const container = document.getElementById('faqContainer');
-            container.innerHTML = `<div class="text-left mb-2"><button onclick="loadRootMenu()" class="text-blue-500">⬅ Quay lại</button></div>`;
             titles.response.forEach(title => {
-                container.innerHTML += `
-                    <button onclick="loadQuestions('${title}')" class="w-full text-left bg-gray-100 mb-1 p-2 rounded">${title}</button>
+                const safeTitle = title.replace(/'/g, "\\'");
+                const titleBtn = document.createElement('div');
+                titleBtn.className = 'flex justify-end mb-2';
+                titleBtn.innerHTML = `
+                    <div onclick="loadQuestions('${safeTitle}')"
+                         class="bg-purple-600 text-white px-4 py-2 rounded-2xl max-w-[80%] text-sm cursor-pointer hover:bg-purple-700 transition">
+                        ${title}
+                    </div>
                 `;
+                container.appendChild(titleBtn);
             });
 
             hideInput();
@@ -86,33 +144,65 @@
         }
     }
 
-    async function loadQuestions(groupName) {
+        async function loadQuestions(groupName) {
         try {
             state.level = 'question';
             state.group = groupName;
 
+            const container = document.getElementById('faqContainer');
+      
+              const rightBubbles = container.querySelectorAll('.flex.justify-end');
+            rightBubbles.forEach(bubble => {
+                const div = bubble.querySelector('div');
+                if (div?.getAttribute('onclick')?.includes('loadQuestions')) {
+                    bubble.remove();
+                }
+            });
+            // Bubble người dùng: chọn tiêu đề
+            const userTitle = document.createElement('div');
+            userTitle.className = 'flex justify-end mb-2';
+            userTitle.innerHTML = `
+                <div class="bg-purple-600 text-white px-4 py-2 rounded-2xl max-w-[80%] text-sm">
+                    ${groupName}
+                </div>
+            `;
+            container.appendChild(userTitle);
+
+            // Bot nhắc: hãy chọn câu hỏi
+            const botMsg = document.createElement('div');
+            botMsg.className = 'flex justify-start mb-2';
+            botMsg.innerHTML = `
+                <div class="bg-gray-100 text-gray-800 px-4 py-2 rounded-2xl italic max-w-[80%] text-sm">
+                    Bạn hãy chọn một câu hỏi cho bạn.
+                </div>
+            `;
+            container.appendChild(botMsg);
+
+            // Load câu hỏi
             const response = await fetch(CHAT_API, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ message: 'faq_get:' + groupName })
             });
 
-            if (!response.ok) {
-                const text = await response.text();
-                throw new Error(text);
-            }
-
+            if (!response.ok) throw new Error(await response.text());
             const result = await response.json();
-            const container = document.getElementById('faqContainer');
-            container.innerHTML = `<div class="text-left mb-2"><button onclick="loadFaqTitles()" class="text-blue-500">⬅ Quay lại</button></div>`;
+
             result.response.forEach(item => {
                 if (!item?.question) return;
                 const safeQuestion = item.question.replace(/'/g, "\\'");
-                container.innerHTML += `
-                    <button onclick="showAnswer('${safeQuestion}')" class="w-full text-left bg-white border mb-1 p-2 rounded">${item.question}</button>
+                const questionEl = document.createElement('div');
+                questionEl.className = 'flex justify-end mb-2';
+                questionEl.innerHTML = `
+                    <div onclick="showAnswer('${safeQuestion}')"
+                         class="bg-purple-500 text-white px-4 py-2 rounded-2xl max-w-[80%] text-sm cursor-pointer hover:bg-purple-700 transition">
+                        ${item.question}
+                    </div>
                 `;
+                container.appendChild(questionEl);
             });
 
+            container.scrollTop = container.scrollHeight;
             hideInput();
         } catch (error) {
             alert("Lỗi khi tải câu hỏi: " + error.message);
@@ -120,53 +210,125 @@
         }
     }
 
-    async function showAnswer(question) {
+
+
+
+
+
+        async function showAnswer(question) {
         try {
+            const container = document.getElementById('faqContainer');
+
+            // Xoá các câu hỏi cũ đang hiển thị (bên phải)
+            const rightBubbles = container.querySelectorAll('.flex.justify-end');
+            rightBubbles.forEach(bubble => {
+                const div = bubble.querySelector('div');
+                if (div?.getAttribute('onclick')?.includes('showAnswer')) {
+                    bubble.remove();
+                }
+            });
+
+            // Hiện câu hỏi như người dùng
+            const userMsg = document.createElement('div');
+            userMsg.className = 'flex justify-end mb-2';
+            userMsg.innerHTML = `
+                <div class="bg-purple-600 text-white px-4 py-2 rounded-2xl max-w-[80%] text-sm">
+                    ${question}
+                </div>
+            `;
+            container.appendChild(userMsg);
+            container.scrollTop = container.scrollHeight;
+
             const response = await fetch(CHAT_API, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ message: question })
             });
 
-            if (!response.ok) {
-                const text = await response.text();
-                throw new Error(text);
-            }
-
+            if (!response.ok) throw new Error(await response.text());
             const result = await response.json();
-            const container = document.getElementById('faqContainer');
-            container.innerHTML = `
-                <div class="text-left mb-2"><button onclick="loadQuestions('${state.group}')" class="text-blue-500">⬅ Quay lại</button></div>
-                <div class="mb-2 text-left"><strong>Câu hỏi:</strong> ${question}</div>
-                <div class="flex justify-start mb-2">
-                    <div class="bg-gray-200 text-gray-800 px-3 py-2 rounded-lg max-w-[80%]">
-                        <strong>Trả lời:</strong> ${result.response}
-                    </div>
+
+            // Hiện câu trả lời
+            const botMsg = document.createElement('div');
+            botMsg.className = 'flex justify-start mb-2';
+            botMsg.innerHTML = `
+                <div class="bg-gray-100 text-gray-800 px-4 py-2 rounded-2xl max-w-[80%] text-sm">
+                    ${result.response}
                 </div>
             `;
-            hideInput();
+            container.appendChild(botMsg);
+
+            // Thêm 2 bong bóng tuỳ chọn: quay lại title và quay lại trang chính
+            const backToTitles = document.createElement('div');
+            backToTitles.className = 'flex justify-start mb-2';
+            backToTitles.innerHTML = `
+                <div onclick="loadFaqTitles()"
+                     class="bg-white border border-gray-300 text-gray-800 px-4 py-2 rounded-2xl max-w-[80%] text-sm cursor-pointer hover:bg-gray-200 transition">
+                    ⬅ Quay lại danh sách tiêu đề
+                </div>
+            `;
+            container.appendChild(backToTitles);
+
+            const backToHome = document.createElement('div');
+            backToHome.className = 'flex justify-start mb-2';
+            backToHome.innerHTML = `
+                <div onclick="loadRootMenu()"
+                     class="bg-white border border-gray-300 text-gray-800 px-4 py-2 rounded-2xl max-w-[80%] text-sm cursor-pointer hover:bg-gray-200 transition">
+                    ⬅ Trở về trang chính
+                </div>
+            `;
+            container.appendChild(backToHome);
+
+            container.scrollTop = container.scrollHeight;
         } catch (error) {
             alert("Lỗi khi hiển thị câu trả lời: " + error.message);
             console.error(error);
         }
     }
 
-    function startAiChat() {
+
+
+
+        function selectTitle(el, title) {
+        // Bỏ chọn tất cả tiêu đề
+        document.querySelectorAll('.faq-title').forEach(btn => {
+            btn.classList.remove('bg-gray-700', 'text-white');
+            btn.classList.add('bg-white', 'text-black');
+        });
+
+        // Đánh dấu đã chọn
+        el.classList.remove('bg-white', 'text-black');
+        el.classList.add('bg-gray-700', 'text-white');
+
+        // Load câu hỏi của tiêu đề đó
+        loadQuestions(title);
+    }
+      function startAiChat() {
         state = { level: 'ai', group: null };
         const container = document.getElementById('faqContainer');
-        container.innerHTML = `<div class="text-left mb-2"><button onclick="loadRootMenu()" class="text-blue-500">⬅ Quay lại</button></div>`;
-        showInput();
+        container.innerHTML = `<div class="text-left mb-2">
+            <button onclick="loadRootMenu()" class="text-blue-500">⬅ Quay lại</button>
+        </div>`;
+
+        const input = document.getElementById('inputChat');
+        if (input) {
+            input.classList.remove('hidden');
+        }
+
+        showInput(); // nếu hàm này có ý nghĩa gì khác
     }
 
-    function showInput() {
-        document.getElementById('chatInput').classList.remove('hidden');
-        document.getElementById('sendBtn').classList.remove('hidden');
+
+     function showInput() {
+        const inputWrapper = document.getElementById('inputChat');
+        if (inputWrapper) inputWrapper.classList.remove('hidden');
     }
 
     function hideInput() {
-        document.getElementById('chatInput').classList.add('hidden');
-        document.getElementById('sendBtn').classList.add('hidden');
+        const inputWrapper = document.getElementById('inputChat');
+        if (inputWrapper) inputWrapper.classList.add('hidden');
     }
+
 
     async function sendMessage() {
         const input = document.getElementById('chatInput');

@@ -9,24 +9,54 @@ namespace Service.Impl
     public class AIService
     {
         private readonly HttpClient _httpClient;
-        private readonly string _apiKey = "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"; 
+        private readonly string _apiKey = "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"; 
         private readonly string _baseUrl = "https://openrouter.ai/api/v1/chat/completions";
-
+        private readonly IAuctionProductService auctionProductService;
         public AIService(HttpClient httpClient)
         {
             _httpClient = httpClient;
         }
+        private bool IsProductInquiry(string input)
+        {
+            input = input.ToLowerInvariant();
+
+            return input.Contains("món gì")
+                || input.Contains("đấu giá gì")
+                || input.Contains("sản phẩm")
+                || input.Contains("món đấu giá")
+                || input.Contains("có gì bán")
+                || input.Contains("đang bán")
+                || input.Contains("đang đấu giá")
+                || input.Contains("có gì không");
+        }
 
         public async Task<string> ProcessUserInputAsync(string userInput)
         {
+            //if (IsProductInquiry(userInput))
+            //{
+            //    var products = await auctionProductService.GetAuctionProductsAsync();
+
+            //    if (products != null && products.Any())
+            //    {
+            //        var productDescriptions = string.Join("\n", products.Select(p =>
+            //            $"- {p.Title} (Giá khởi điểm: {p.StartPrice:N0} VND, Thời gian: {p.StartTime:dd/MM/yyyy HH:mm} - {p.EndTime:dd/MM/yyyy HH:mm})"));
+
+            //        userInput += $"\n\nDanh sách các sản phẩm đang đấu giá:\n{productDescriptions}";
+            //    }
+            //    else
+            //    {
+            //        userInput += "\n\nHiện tại không có sản phẩm nào đang được đấu giá.";
+            //    }
+            //}
+
             var requestBody = new
             {
-                model = "tngtech/deepseek-r1t2-chimera:free", 
+                model = "tngtech/deepseek-r1t2-chimera:free",
                 messages = new[]
                 {
-                    new { role = "system", content = "Bạn là trợ lý thông minh cho đấu giá trực tuyến." },
-                    new { role = "user", content = userInput }
-                }
+            new { role = "system", content = "Bạn là AI hỗ trợ cho đấu giá trực tuyến." },
+            new { role = "user", content = userInput }
+        }
             };
 
             var request = new HttpRequestMessage(HttpMethod.Post, _baseUrl)
@@ -35,9 +65,8 @@ namespace Service.Impl
             };
 
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _apiKey);
-
-            request.Headers.Add("HTTP-Referer", "https://localhost:32769/"); 
-            request.Headers.Add("X-Title", "Biddify ChatBot");  
+            request.Headers.Add("HTTP-Referer", "https://localhost:32769/");
+            request.Headers.Add("X-Title", "Biddify ChatBot");
 
             var response = await _httpClient.SendAsync(request);
 
