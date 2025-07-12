@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
@@ -10,6 +11,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.2.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.5">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
@@ -19,9 +21,31 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj" />
     <ProjectReference Include="..\DataAccess\DataAccess.csproj" />
     <ProjectReference Include="..\Domain\Domain.csproj" />
     <ProjectReference Include="..\Services\Service.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Pages\Admin\Auctions\Edit\" />
+    <Folder Include="Pages\Admin\Auctions\Create\" />
+    <Folder Include="Attributes\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="Pages\Admin\Auctions\Detail\Index.cshtml.cs" />
+    <Content Remove="Pages\Admin\Auctions\Edit\Index.cshtml.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Pages\Admin\Auctions\Detail\Index.cshtml.cs" />
+    <None Include="Pages\Admin\Auctions\Edit\Index.cshtml.cs" />
+    <None Include="Pages\Admin\Auctions\Index.cshtml.cs" />
+  </ItemGroup>
+
+  <Target Name="Tailwind" BeforeTargets="Build">
+    <Exec Command="npm run css:build" />
+  </Target>
 
 </Project>

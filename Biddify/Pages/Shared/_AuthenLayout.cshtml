@@ -1,22 +1,41 @@
-﻿<!DOCTYPE html>
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewBag.Title</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/authenLayout.css" asp-append-version="true" />
+    <title>@ViewBag.Title - Biddify</title>
+    <link href="~/css/styles.css" rel="stylesheet" asp-append-version="true" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+    @await RenderSectionAsync("Styles", required: false)
+    <style>
+        .auth-background {
+            background-color: #374151;
+            background-image: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+        }
+    </style>
 </head>
-<body>
-    <div class="container">
-        <main role="main" class="pb-3">
+<body class="auth-background">
+    <div class="min-h-screen flex flex-col">
+        <!-- Logo Section -->
+        <div class="flex justify-center pt-8">
+            <a href="/" class="flex items-center space-x-2">
+                <img src="~/css/Logo/snapedit_1748847796914.png" alt="Biddify Logo" class="h-12">
+            </a>
+        </div>
+
+        <!-- Main Content -->
+        <main role="main" class="flex-grow flex items-center justify-center p-4">
             @RenderBody()
         </main>
-    </div>
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+        <!-- Footer -->
+        <footer class="py-4 text-center text-gray-400">
+            <p>&copy; @DateTime.Now.Year - Biddify. All rights reserved.</p>
+        </footer>
+    </div>
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>

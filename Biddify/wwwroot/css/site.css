@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 @import url('site.css');
 html {
   font-size: 14px;
@@ -36,7 +40,7 @@ banner-wrapper {
 
 .banner-content {
     position: absolute;
-    top: 20%;
+    top: 10%;
     left: 50%;
     transform: translate(-50%, -50%);
     display: flex;

@@ -1,0 +1,245 @@
+﻿@page "/Profile"
+@model Biddify.Pages.Profiles.MyProfileModel
+@{
+    ViewData["Title"] = "MyProfile";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+<style>
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    input[type=number] {
+        -moz-appearance: textfield;
+    }
+
+   button:focus{
+        box-shadow: none !important;
+        border-color: inherit !important;
+        outline: none !important;
+   }
+   button:hover{
+        border-color: inherit !important;
+   }
+    input:focus {
+        box-shadow: none !important;
+        border-color: inherit !important;
+        outline: none !important;
+    }
+
+    input:hover {
+        border-color: inherit !important;
+    }
+</style>
+@section FullWidthHeader {
+    <!-- Banner Section -->
+    <div class="banner-wrapper">
+        <img src="https://demo-egenslab.b-cdn.net/html/bidgen/preview/assets/images/banner/breadcrumb-bg.png"
+             class="banner-image"
+             alt="Auction Banner" />
+        <div class="banner-content">
+            <h1 class="banner-title">Contact</h1>
+            <p class="banner-breadcrumb flex item-center">
+                <a href="/" class="banner-link">
+                    <span class="flex item-center justify-content-center gap-2">
+                        Home
+                    </span>
+                </a> / Profile
+            </p>
+        </div>
+    </div>
+}
+
+
+<div class="flex min-h-screen">
+    <!-- Sidebar -->
+    <div class="w-1/4  border-r p-4" style="background-color:#f8f9fa">
+        <ul class="space-y-3">
+          
+            <li>
+                <button class="w-full text-left bg-white hover:bg-black p-4 rounded-lg flex items-center text-base font-medium shadow-sm" onclick="loadTab('info')">
+                    <span class="material-symbols-outlined mr-4 text-2xl">account_circle</span>
+                    <div class="uppercase">Profile Information</div>
+                </button>
+            </li>
+            <li>
+                <button class="w-full text-left bg-white hover:bg-gray-100 p-4 rounded-lg flex items-center text-base font-medium shadow-sm" onclick="loadTab('security')">
+                    <span class="material-symbols-outlined mr-4 text-2xl">beenhere</span>
+                    <div class="uppercase">Security Management</div>
+                </button>
+            </li>
+            <li>
+                <button class="w-full text-left bg-white hover:bg-gray-100 p-4 rounded-lg flex items-center text-base font-medium shadow-sm" onclick="loadTab('auction')">
+                    <span class="material-symbols-outlined mr-4 text-2xl">gavel</span>
+                    <div class="uppercase">Auction History </div>
+                </button>
+            </li>
+            <li>
+                <button class="w-full text-left bg-white hover:bg-gray-100 p-4 rounded-lg flex items-center text-base font-medium shadow-sm" onclick="loadTab('transaction')">
+                    <span class="material-symbols-outlined mr-4 text-2xl">credit_card_clock</span>
+                    <div class="uppercase">Transaction History</div>
+                </button>
+            </li>
+            <li>
+                <button class="w-full text-left bg-white hover:bg-red-100 p-4 rounded-lg flex items-center text-base font-medium shadow-sm text-red-600" onclick="loadTab('settings')">
+                    <span class="material-symbols-outlined mr-4 text-2xl">logout</span>
+                    <div class="uppercase">Log Out</div>
+                </button>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Nội dung -->
+    <div class="w-3/4 p-4" id="profile-content">
+        @{
+            @await Html.PartialAsync("Partial/_ProfileInfor", Model.CurrentUser)
+        }
+        <div class="mb-4 text-center">
+            <button class="bg-dark hover:bg-dark text-white font-bold py-2 px-4"
+                    data-bs-toggle="modal"
+                    data-bs-target="#topUpModal">
+                Deposit account
+            </button>
+        </div>
+    </div>
+    <div class="modal fade" id="topUpModal" tabindex="-1" aria-labelledby="topUpModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" asp-page-handler="RequestDeposit">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="topUpModalLabel">Deposit into your account</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" style="background-color:#F9F9F9">
+                        <div class="flex justify-between">
+                            <div class="flex">
+                                <div class="mr-2 h-[48px] w-[48px] flex items-center justify-center bg-gray-100 rounded">
+                                    <span class="material-symbols-outlined text-[36px] leading-[1]">
+                                        account_balance
+                                    </span>
+                                </div>
+                                <div class="flex flex-col justify-center">
+                                    <div class="uppercase font-semibold">Bank Transfer</div>
+                                    <p class="text-sm text-gray-600">Limit deposit 1$ - 100000$</p>
+                                </div>
+                            </div>
+
+                            <div class="felx flex-col text-end">
+                                <div>Fee transaction:</div>
+                                <p class="text-sm">Free</p>
+                            </div>
+                        </div>
+                        <div class="border rounded px-4 py-4" style="background-color:#FFFFFF">
+                            <!-- Ô nhập tiền -->
+                            <div class="input-group border rounded p-2">
+                                <input oninput="updateVNDInput()" type="number" class="form-control border-0" placeholder="1 - 10000"
+                                       id="amount" name="DepositAmount" min="1" required />
+                                <span class="input-group-text bg-white border-0">$</span>
+                            </div>
+
+                            <div class="text-primary my-3 d-flex align-items-center">
+                                <span>=</span>
+                                <span class="ms-2" id="vndAmount">0 VND</span>
+                            </div>
+
+
+                            <div class="d-grid gap-2" style="grid-template-columns: repeat(4, 1fr);">
+                                <button class="btn btn-outline-dark" onclick="InputMoney(10)">10$</button>
+                                <button class="btn btn-outline-dark" onclick="InputMoney(20)">20$</button>
+                                <button class="btn btn-outline-dark" onclick="InputMoney(50)">50$</button>
+                                <button class="btn btn-outline-dark" onclick="InputMoney(100)">100$</button>
+                                <button class="btn btn-outline-dark" onclick="InputMoney(500)">500$</button>
+                                <button class="btn btn-outline-dark" onclick="InputMoney(1000)">1000$</button>
+                                <button class="btn btn-outline-dark" onclick="InputMoney(5000)">5000$</button>
+                                <button class="btn btn-outline-dark" onclick="InputMoney(10000)">10000$</button>
+                            </div>
+
+                        </div>
+
+                       
+                
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-dark">Confirm</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <script>
+        function loadTab(tabName) {
+            fetch(`/Profile?handler=LoadPartial&tab=${tabName}`)
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('profile-content').innerHTML = html;
+                });
+        }
+
+
+
+
+
+       // RealTime money
+                const access_key = '28584fe567b15102cf5c394cfeb97954';
+        const endpoint = 'convert';
+        const from = 'USD';
+        const to = 'VND';
+
+        function InputMoney(amount) {
+              event.preventDefault();
+            const input = document.getElementById("amount");
+            input.value = amount;
+            updateVND(amount);
+        }
+
+        document.getElementById("amount").addEventListener("input", function () {
+            const value = parseFloat(this.value);
+            if (!isNaN(value)) {
+                updateVND(value);
+            } else {
+                document.getElementById("vndAmount").textContent = "0 VND";
+            }
+        });
+         function updateVNDInput(){
+         
+         const value = parseFloat(document.getElementById("amount").value);
+         if (!isNaN(value)) {
+             updateVND(value);
+         } else {
+             document.getElementById("vndAmount").textContent = "0 VND";
+         }
+         }
+
+        function updateVND(amount) {
+            $.ajax({
+                url: 'https://api.exchangerate.host/' + endpoint
+                    + '?access_key=' + access_key
+                    + '&from=' + from
+                    + '&to=' + to
+                    + '&amount=' + amount,
+                dataType: 'jsonp',
+                success: function (json) {
+                    if (json && json.result) {
+                        const vndAmount = json.result;
+                        document.getElementById("vndAmount").textContent =
+                            vndAmount.toLocaleString('vi-VN') + " VND";
+                    } else {
+                        document.getElementById("vndAmount").textContent = "0 VND";
+                        console.error("Dữ liệu không hợp lệ từ API");
+                    }
+                },
+                error: function (err) {
+                    console.error("Lỗi khi gọi API:", err);
+                    document.getElementById("vndAmount").textContent = "0 VND";
+                }
+            });
+        }
+    </script>
+}

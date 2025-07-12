@@ -1,0 +1,129 @@
+﻿@page
+@model Biddify.Pages.Admin.Users.IndexModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Manage Users";
+}
+
+<section class="space-y-6" x-data="userModal()">
+    <h1 class="text-2xl font-bold text-gray-800">Manage Users</h1>
+
+    <div class="bg-white shadow rounded-xl overflow-hidden border">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-100 text-sm font-semibold text-gray-700 text-left">
+                <tr>
+                    <th class="px-6 py-4">User</th>
+                    <th class="px-6 py-4">Email</th>
+                    <th class="px-6 py-4">Role</th>
+                    <th class="px-6 py-4">Status</th>
+                    <th class="px-6 py-4 text-right">Balance</th>
+                    <th class="px-6 py-4">Created At</th>
+                    <th class="px-6 py-4 text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-100 text-sm text-gray-700">
+                @{
+                    var users = new List<dynamic>
+                                {
+                                new { DisplayName = "Alice Johnson", Email = "alice@example.com", Role = "Admin", Status = "Active", Balance = 1200.50m, CreatedAt = DateTime.UtcNow.AddDays(-12) },
+                                new { DisplayName = "Bob Smith", Email = "bob@example.com", Role = "User", Status = "Inactive", Balance = 330.10m, CreatedAt = DateTime.UtcNow.AddDays(-45) },
+                                new { DisplayName = "Charlie Nguyen", Email = "charlie@example.com", Role = "Moderator", Status = "Pending", Balance = 720.00m, CreatedAt = DateTime.UtcNow.AddDays(-7) },
+                                };
+
+                    int avatarSeed = 1;
+                    foreach (var user in users)
+                    {
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="px-6 py-4 flex items-center gap-3">
+                                <img src="https://i.pravatar.cc/40?img=@(avatarSeed++)" class="w-10 h-10 rounded-full border" />
+                                <span class="font-medium">@user.DisplayName</span>
+                            </td>
+                            <td class="px-6 py-4">@user.Email</td>
+                            <td class="px-6 py-4">@user.Role</td>
+                            <td class="px-6 py-4">
+                                <span class="px-3 py-1 rounded-full text-xs font-semibold
+                                            @(user.Status == "Active" ? "bg-green-100 text-green-700" :
+                                                                            user.Status == "Inactive" ? "bg-yellow-100 text-yellow-700" :
+                                                                            user.Status == "Pending" ? "bg-blue-100 text-blue-700" :
+                                                                            "bg-red-100 text-red-700")">
+                            @user.Status
+                        </span>
+                        </td>
+                        <td class="px-6 py-4 text-right font-mono font-semibold">$@user.Balance</td>
+                        <td class="px-6 py-4">@user.CreatedAt.ToString("yyyy-MM-dd")</td>
+                        <td class="px-6 py-4 text-center">
+                                <div class="flex justify-center gap-2">
+                                    <button class="text-blue-600 hover:text-blue-800" @@click="openModal('view', '@user.DisplayName')">
+                                        <i data-lucide="eye" class="w-5 h-5"></i>
+                                    </button>
+                                    <button class="text-yellow-600 hover:text-yellow-800" @@click="openModal('edit', '@user.DisplayName')">
+                                        <i data-lucide="edit" class="w-5 h-5"></i>
+                                    </button>
+                                    <button class="text-red-600 hover:text-red-800" @@click="openModal('delete', '@user.DisplayName')">
+                                        <i data-lucide="trash-2" class="w-5 h-5"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Modal -->
+    <div x-show="show" x-transition x-cloak
+         class="fixed inset-0 h-full w-full bg-black bg-opacity-40 flex items-center justify-center z-50" style="margin-top: 0px;">
+        <div class="bg-white w-full max-w-md rounded-xl shadow-lg p-6 relative">
+            <h2 class="text-xl font-bold mb-4 capitalize" x-text="modalType + ' User'"></h2>
+            <p class="text-gray-600 mb-6" x-text="`User: ${selectedUser}`"></p>
+
+            <template x-if="modalType === 'view'">
+                <p class="text-sm text-gray-500">Here you can show detailed information about the user.</p>
+            </template>
+
+            <template x-if="modalType === 'edit'">
+                <div class="space-y-4">
+                    <input type="text" class="w-full border rounded px-3 py-2" placeholder="Edit name..." />
+                    <input type="email" class="w-full border rounded px-3 py-2" placeholder="Edit email..." />
+                    <button class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Save</button>
+                </div>
+            </template>
+
+            <template x-if="modalType === 'delete'">
+                <div class="space-y-3">
+                    <p class="text-red-600 text-sm">Are you sure you want to delete this user?</p>
+                    <div class="flex justify-end gap-2">
+                        <button class="px-4 py-2 border rounded hover:bg-gray-100" @@click="show = false">Cancel</button>
+                        <button class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Delete</button>
+                    </div>
+                </div>
+            </template>
+
+            <button class="absolute top-2 right-2 text-gray-500 hover:text-gray-700" @@click="show = false">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => lucide.createIcons());
+
+        function userModal() {
+            return {
+                show: false,
+                modalType: '',
+                selectedUser: '',
+                openModal(type, name) {
+                    this.modalType = type;
+                    this.selectedUser = name;
+                    this.show = true;
+                }
+            };
+        }
+    </script>
+}

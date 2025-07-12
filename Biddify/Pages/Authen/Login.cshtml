@@ -2,57 +2,204 @@
 @model Biddify.Pages.Authen.LoginModel
 @{
     ViewData["Title"] = "Login";
-    Layout = "~/Pages/Shared/_Layout.cshtml";
+    Layout = "~/Pages/Shared/_AuthenLayout.cshtml";
 }
 
-<div>
-    <div class="items-center container mx-auto mt-5">
-        <div class="min-h-full flex-col justify-center px-6 py-12 lg:px-8 rounded-t-lg" style="background-color: #12173d;">
-            <div class="sm:mx-auto sm:w-full sm:max-w-sm">
-                <img class="mx-auto h-20 w-auto" src="~/css/Logo/snapedit_1748847796914.png">
-                <h2 class="mt-6 text-center text-2xl/9 font-bold tracking-tight" style="color: white;">Sign in to your account</h2>
-            </div>
+<style>
+    .form-input {
+        padding-left: 2.5rem;
+        display: block;
+        width: 100%;
+        border-radius: 0.5rem;
+        border: 1px solid #D1D5DB;
+        background-color: #F9FAFB;
+        transition: all 0.2s ease-in-out;
+    }
 
-            <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-                <form class="space-y-8" method="post">
-                    <div>
-                        <label asp-for="LoginViewModel.Email" class="block text-sm/6 font-medium" style="color: #9395a7;"></label>
-                        <div class="mt-2">
-                            <input asp-for="LoginViewModel.Email" placeholder="Enter your email"
-                                   class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
-                            <span asp-validation-for="LoginViewModel.Email" class="text-red-500 text-sm"></span>
+    .form-input:hover {
+        border-color: #93C5FD;
+        background-color: white;
+    }
+
+    .form-input:focus {
+        outline: none;
+        border-color: transparent;
+        box-shadow: 0 0 0 2px #3B82F6;
+    }
+
+    .input-icon {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        padding-left: 0.75rem;
+        display: flex;
+        align-items: center;
+        pointer-events: none;
+        color: #9CA3AF;
+        transition: color 0.2s ease-in-out;
+    }
+
+    .form-input:focus + .input-icon i {
+        color: #3B82F6;
+    }
+
+    .form-label {
+        display: block;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #374151;
+        margin-bottom: 0.25rem;
+        transition: color 0.2s ease-in-out;
+    }
+
+    .form-input:focus + .input-icon + .form-label {
+        color: #3B82F6;
+    }
+
+    .checkbox-input {
+        height: 1rem;
+        width: 1rem;
+        color: #2563EB;
+        border-color: #D1D5DB;
+        border-radius: 0.25rem;
+        transition: all 0.2s ease-in-out;
+        cursor: pointer;
+    }
+
+    .checkbox-input:focus {
+        outline: none;
+        box-shadow: 0 0 0 2px #3B82F6;
+    }
+
+    .submit-button {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        padding: 0.75rem 1rem;
+        border: 1px solid transparent;
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: white;
+        background-color: #2563EB;
+        transition: all 0.2s ease-in-out;
+        transform: scale(1);
+    }
+
+    .submit-button:hover {
+        background-color: #1D4ED8;
+        transform: scale(1.02);
+    }
+
+    .submit-button:focus {
+        outline: none;
+        box-shadow: 0 0 0 2px #93C5FD;
+    }
+
+    .error-box {
+        padding: 1rem;
+        border-radius: 0.5rem;
+        background-color: #FEF2F2;
+        border-left: 4px solid #EF4444;
+        transition: all 0.3s ease-out;
+    }
+
+    .link-blue {
+        color: #2563EB;
+        font-weight: 500;
+        transition: color 0.2s ease-in-out;
+    }
+
+    .link-blue:hover {
+        color: #1D4ED8;
+    }
+
+    .form-container {
+        background-color: white;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        border-radius: 0.5rem;
+        overflow: hidden;
+        transition: all 0.3s ease-in-out;
+    }
+
+    .form-container:hover {
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+</style>
+
+<div class="w-full max-w-md">
+    <div class="form-container">
+        <!-- Form Section -->
+        <div class="p-8">
+            <h2 class="text-2xl font-bold text-center text-gray-800 mb-8">Sign in to your account</h2>
+            
+            <form method="post" class="space-y-6">
+                <!-- Email Field -->
+                <div class="relative">
+                    <label asp-for="LoginViewModel.Email" class="form-label">
+                        Email Address
+                    </label>
+                    <div class="relative">
+                        <input asp-for="LoginViewModel.Email" 
+                               class="form-input"
+                               placeholder="Enter your email" />
+                        <div class="input-icon">
+                            <i class="bi bi-envelope"></i>
                         </div>
                     </div>
+                    <span asp-validation-for="LoginViewModel.Email" class="mt-1 text-sm text-red-600 block"></span>
+                </div>
 
-                    <div>
-                        <div class="flex items-center justify-between">
-                            <label asp-for="LoginViewModel.Password" class="block text-sm/6 font-medium" style="color: #9395a7;"></label>
-                            <div class="text-sm">
-                                <a href="/Verifyemail" class="font-semibold hover:text-indigo-500" style="color: #4f46e5;">Forgot password?</a>
-                            </div>
-                        </div>
-                        <div class="mt-2">
-                            <input asp-for="LoginViewModel.Password" type="password" placeholder="Enter your password"
-                                   class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
-                            <span asp-validation-for="LoginViewModel.Password" class="text-red-500 text-sm"></span>
+                <!-- Password Field -->
+                <div class="relative">
+                    <div class="flex items-center justify-between mb-1">
+                        <label asp-for="LoginViewModel.Password" class="form-label">
+                            Password
+                        </label>
+                        <a href="/Verifyemail" class="link-blue">
+                            Forgot password?
+                        </a>
+                    </div>
+                    <div class="relative">
+                        <input asp-for="LoginViewModel.Password" 
+                               type="password"
+                               class="form-input"
+                               placeholder="Enter your password" />
+                        <div class="input-icon">
+                            <i class="bi bi-lock"></i>
                         </div>
                     </div>
+                    <span asp-validation-for="LoginViewModel.Password" class="mt-1 text-sm text-red-600 block"></span>
+                </div>
 
-                    <div class="mt-6 mb-10">
-                        <button type="submit"
-                                class="flex w-full justify-center rounded-md px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                                style="background-color: #4f46e5;">
-                            Sign in
-                        </button>
-                    </div>
-                </form>
-            </div>
+                <!-- Remember Me -->
+                <div class="flex items-center">
+                    <input asp-for="LoginViewModel.RememberMe" 
+                           type="checkbox"
+                           class="checkbox-input" />
+                    <label asp-for="LoginViewModel.RememberMe" class="ml-2 block text-sm text-gray-700 cursor-pointer select-none">
+                        Remember me
+                    </label>
+                </div>
+
+                <!-- Submit Button -->
+                <div>
+                    <button type="submit" class="submit-button">
+                        <i class="bi bi-box-arrow-in-right mr-2"></i>
+                        Sign in
+                    </button>
+                </div>
+            </form>
         </div>
 
-        <div class="rounded-b-lg" style="background-color: #191f4b;">
-            <p class="h-20 text-center text-sm/6 text-gray-500 p-8">
-                Not a member?
-                <a href="/Register" class="font-semibold hover:text-indigo-500" style="color: #4f46e5;">Sign Up</a>
+        <!-- Sign Up Link -->
+        <div class="px-8 py-6 bg-gray-50 border-t border-gray-100">
+            <p class="text-sm text-center text-gray-600">
+                Not a member yet?
+                <a href="/Register" class="link-blue">
+                    Create an account
+                </a>
             </p>
         </div>
     </div>
@@ -60,4 +207,20 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Add smooth appearance for error box
+        document.addEventListener('DOMContentLoaded', function() {
+            const errorBox = document.querySelector('.error-box');
+            if (errorBox) {
+                errorBox.style.opacity = '0';
+                errorBox.style.transform = 'translateY(-10px)';
+                
+                // Force a reflow
+                errorBox.offsetHeight;
+                
+                errorBox.style.opacity = '1';
+                errorBox.style.transform = 'translateY(0)';
+            }
+        });
+    </script>
 }

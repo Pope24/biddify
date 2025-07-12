@@ -1,78 +1,118 @@
+﻿using Biddify.SignalR;
+using Common;
+using DataAccess;
+using Domain.Enums;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.SignalR;
+using Service;
 
 namespace Biddify.Pages.Auction;
 
 public class AuctionDetailModel : PageModel
 {
-    public AuctionItem Item { get; set; }
-    public List<AuctionItem> AuctionItems { get; set; }
-
-    public void OnGet(int id)
+    private readonly IAuctionProductService auctionProductService;
+    private readonly UserManager<UserEntity> userManager;
+    private readonly IBidService bidService;
+    private readonly IHubContext<BidHub> bidHubContext;
+    private readonly ICommentService commentService;
+    public AuctionDetailModel(IAuctionProductService _auctionProductService, UserManager<UserEntity> _userManager, IBidService _bidService, IHubContext<BidHub> _bidHubContext, ICommentService _commentService)
     {
-        Item = new AuctionItem
-        {
-            Id = id,
-            Name = "Lamborghini Huracan Red Mercedes AMG",
-            Price = 20979.00,
-            CurrentBid = 20979.00,
-            TimeLeft = "11:00:00:08:23",
-            Status = "Live",
-            ImageUrl = "/images/car-main.jpg",
-            EndTimeUtc = DateTime.UtcNow.AddDays(2),
-        };
-        var twoHours = DateTime.UtcNow.AddHours(2);
-
-        AuctionItems = new List<AuctionItem>
-        {
-            new AuctionItem
-            {
-                Id = 1,
-                Name = "Citro�n C4 Picasso",
-                Price = 2526,
-                CurrentBid = 1079,
-                TimeLeft = "11:12:43",
-                Status = "Waiting for Bid",
-                ImageUrl =
-                    "https://demo-egenslab.b-cdn.net/html/bidgen/preview/assets/images/product/lp-1.png",
-                EndTimeUtc = twoHours,
-            },
-            new AuctionItem
-            {
-                Id = 2,
-                Name = "Ford Focus 1.2",
-                Price = 3000,
-                CurrentBid = 2000,
-                TimeLeft = "11:12:43",
-                Status = "Waiting for Bid",
-                ImageUrl =
-                    "https://demo-egenslab.b-cdn.net/html/bidgen/preview/assets/images/product/lp-2.png",
-                EndTimeUtc = twoHours.AddMinutes(30),
-            },
-            new AuctionItem
-            {
-                Id = 3,
-                Name = "Masrati Mustang GT Premium",
-                Price = 1500,
-                CurrentBid = 899,
-                TimeLeft = "11:12:43",
-                Status = "Waiting for Bid",
-                ImageUrl =
-                    "https://demo-egenslab.b-cdn.net/html/bidgen/preview/assets/images/product/lp-3.png",
-                EndTimeUtc = DateTime.UtcNow.AddHours(9).AddMinutes(40),
-            },
-        };
+        this.auctionProductService = _auctionProductService;
+        this.userManager = _userManager;
+        this.bidService = _bidService;
+        this.bidHubContext = _bidHubContext;
+        this.commentService = _commentService;
+        AuctionItems = new List<AuctionProductEntity>(); // Initialize to empty list
     }
 
-    public class AuctionItem
+    public AuctionProductEntity Item { get; set; }
+    public List<AuctionProductEntity> AuctionItems { get; set; }
+
+    public async Task<IActionResult> OnGetAsync(string id)
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public double Price { get; set; }
-        public double CurrentBid { get; set; }
-        public string TimeLeft { get; set; }
-        public string Status { get; set; }
-        public string ImageUrl { get; set; }
-        public DateTime EndTimeUtc { get; set; }
+        Item = await auctionProductService.GetAuctionProductByIdAsync(id);
+        
+        // Get related auctions (same category)
+        var result = await auctionProductService.GetAuctionProductsAsync(
+            category: Item.CategoryProduct,
+            pageSize: 3); // Limit to 3 related items
+            
+        AuctionItems = result.Items.Where(a => a.Id != id).ToList(); // Exclude current item
+        return Page();
+    }
+    
+    public async Task<IActionResult> OnPostBidAsync(decimal AmountBid, string ItemId)
+    {
+        var user = await userManager.GetUserAsync(User);
+        if (user == null) return RedirectToPage("/Authen/Login");
+
+        Item = await auctionProductService.GetAuctionProductByIdAsync(ItemId);
+        if (Item.Status != EAuctionStatus.Active)
+        {
+            TempData["AccessBidDetailError"] = $"Auction product is '{EnumHelper.ToDisplayString(Item.Status)}' status.";
+            return RedirectToPage();
+        }
+        var now = DateTime.UtcNow;
+
+        if (now < Item.StartTime || now > Item.EndTime)
+        {
+            TempData["AccessBidDetailError"] = "The product is not in the auction period time.";
+            return RedirectToPage();
+        }
+        var requiredFee = Item.StartPrice * 0.01m;
+        if (user.Balance < requiredFee)
+        {
+            TempData["AccessBidDetailError"] = $"You need at least {requiredFee:#,##0.00}$ (1%) to participate in the auction.";
+            return RedirectToPage();
+        }
+        // Check amountBid có đúng không
+        var currentPrice = Item.Bids.Count() == 0 ? Item.StartPrice : Item.Bids.OrderByDescending(b => b.Amount).First().Amount;
+        var minBid = Item.MinBidPrice;
+        if (AmountBid < currentPrice + minBid)
+        {
+            TempData["AccessBidDetailError"] = $"You need to bid at least {(currentPrice + minBid):#,##0.00}$.";
+            return RedirectToPage();
+        }
+
+        var newBid = new BidEntity
+        {
+            Id = Guid.NewGuid().ToString(),
+            BidderId = user.Id,
+            AuctionProductId = Item.Id,
+            Amount = AmountBid
+        };
+        await bidService.AddBidAsync(newBid);
+        await bidHubContext.Clients.All.SendAsync("ReceiveBidAdd", ItemId.ToString());
+        return RedirectToPage();
+    }
+    public async Task<IActionResult> OnGetBidInfo(string id)
+    {
+        var item = await auctionProductService.GetAuctionProductByIdAsync(id);
+        var bid = item.Bids.OrderByDescending(b => b.CreatedAt).FirstOrDefault();
+        return new JsonResult(new
+        {
+            current = bid?.Amount ?? item.StartPrice,
+            bids = item.Bids
+                .OrderByDescending(b => b.CreatedAt)
+                .Select(b => new {
+                    name = b.Bidder.DisplayName,
+                    created = b.CreatedAt.ToString("dd/MM/yyyy HH:mm:ss"),
+                    amount = b.Amount.ToString("#,##0.00")
+                })
+        });
+    }
+    public async Task<IActionResult> OnGetCommentsAsync(string auctionId, int page = 1, int pageSize = 10)
+    {
+        var comments = (await commentService.GetCommentLazyLoadingAsync(auctionId, page, pageSize))
+            .Select(c => new
+            {
+                user = c.User.DisplayName,
+                message = c.Content,
+                createAt = DateTimeExtension.ConvertUtcToVNTime(c.CreatedAt).ToString("dd/MM/yyyy HH:mm:ss")
+            });
+
+        return new JsonResult(comments);
     }
 }
