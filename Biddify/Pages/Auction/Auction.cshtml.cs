@@ -1,6 +1,8 @@
 ﻿using DataAccess;
+using Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Service;
 using System.Net.Http.Headers;
 using System.Text.Json;
@@ -19,14 +21,93 @@ public class AuctionModel : PageModel
         this.auctionProductService = auctionProductService;
         _httpClientFactory = httpClientFactory;
         _config = config;
+        AuctionItems = new List<AuctionProductEntity>(); // Initialize to empty list
     }
 
     public List<AuctionProductEntity> AuctionItems { get; set; }
+    
+    [BindProperty(SupportsGet = true)]
+    public string SearchTerm { get; set; }
+    
+    [BindProperty(SupportsGet = true)]
+    public EAuctionStatus? StatusFilter { get; set; }
+    
+    [BindProperty(SupportsGet = true)]
+    public ECategoryProduct? CategoryFilter { get; set; }
+    
+    [BindProperty(SupportsGet = true)]
+    public string TimeFilter { get; set; }
+    
+    [BindProperty(SupportsGet = true)]
+    public int CurrentPage { get; set; } = 1;
+    
+    public int PageSize { get; set; } = 9;
+    public int TotalItems { get; set; }
+    public int TotalPages => (int)Math.Ceiling(TotalItems / (double)PageSize);
+    
+    public SelectList StatusSelectList { get; set; }
+    public SelectList CategorySelectList { get; set; }
+    public SelectList TimeSelectList { get; set; }
 
     public async Task OnGetAsync()
     {
-        AuctionItems =
-            (List<AuctionProductEntity>)await auctionProductService.GetAuctionProductsAsync();
+        // Ensure current page is at least 1
+        if (CurrentPage < 1)
+        {
+            CurrentPage = 1;
+        }
+        
+        // Initialize the select lists
+        StatusSelectList = new SelectList(
+            Enum.GetValues(typeof(EAuctionStatus))
+                .Cast<EAuctionStatus>()
+                .Select(s => new SelectListItem
+                {
+                    Value = s.ToString(),
+                    Text = GetStatusDisplayName(s)
+                }),
+            "Value", "Text");
+        
+        CategorySelectList = new SelectList(
+            Enum.GetValues(typeof(ECategoryProduct))
+                .Cast<ECategoryProduct>()
+                .Select(c => new SelectListItem
+                {
+                    Value = c.ToString(),
+                    Text = GetCategoryDisplayName(c)
+                }),
+            "Value", "Text");
+        
+        TimeSelectList = new SelectList(new List<SelectListItem>
+        {
+            new SelectListItem { Value = "", Text = "All" },
+            new SelectListItem { Value = "current", Text = "Current Auctions" },
+            new SelectListItem { Value = "upcoming", Text = "Upcoming Auctions" }
+        }, "Value", "Text");
+
+        // Apply filters
+        bool? isCurrent = null;
+        
+        if (TimeFilter == "current")
+        {
+            isCurrent = true;
+        }
+        else if (TimeFilter == "upcoming")
+        {
+            isCurrent = false;
+        }
+
+        // Get auction items with filters and pagination
+        var result = await auctionProductService.GetAuctionProductsAsync(
+            SearchTerm ?? "", 
+            StatusFilter, 
+            CategoryFilter, 
+            isCurrent,
+            CurrentPage,
+            PageSize);
+            
+        AuctionItems = result.Items.ToList();
+        TotalItems = result.TotalCount;
     }
 
     public IActionResult OnPostSubmitBid(int ItemId)
@@ -34,10 +115,11 @@ public class AuctionModel : PageModel
         // TODO: xử lý submit bid
         return RedirectToPage();
     }
+    
     public async Task<IActionResult> OnGetVoiceSearchAsync(string transcript)
     {
-        var products = await auctionProductService.GetAuctionProductsAsync();
-        var nameProducts = products.Select(p => p.Title).ToList();
+        var result = await auctionProductService.GetAuctionProductsAsync();
+        var nameProducts = result.Items.Select(p => p.Title).ToList();
 
         var prompt = $@"
                         Bạn là trợ lý tìm kiếm sản phẩm.
@@ -76,7 +158,34 @@ public class AuctionModel : PageModel
                             .GetString() ?? "";
         List<string> productsRes = new List<string>();
         productsRes = JsonSerializer.Deserialize<List<string>>(answer);
-        AuctionItems = products.Where(p => productsRes.Contains(p.Title)).ToList();
+        AuctionItems = result.Items.Where(p => productsRes.Contains(p.Title)).ToList();
+        TotalItems = AuctionItems.Count;
         return Page();
+    }
+    
+    private string GetStatusDisplayName(EAuctionStatus status)
+    {
+        return status switch
+        {
+            EAuctionStatus.PendingApproval => "Pending Approval",
+            EAuctionStatus.Active => "Active",
+            EAuctionStatus.Ended => "Ended",
+            EAuctionStatus.Cancelled => "Cancelled",
+            _ => status.ToString()
+        };
+    }
+    
+    private string GetCategoryDisplayName(ECategoryProduct category)
+    {
+        return category switch
+        {
+            ECategoryProduct.DiamondRing => "Diamond Ring",
+            ECategoryProduct.Necklace => "Necklace",
+            ECategoryProduct.Bracelet => "Bracelet",
+            ECategoryProduct.Earring => "Earring",
+            ECategoryProduct.LooseGemstone => "Loose Gemstone",
+            ECategoryProduct.JewelryWatch => "Jewelry Watch",
+            _ => category.ToString()
+        };
     }
 }
