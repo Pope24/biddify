@@ -9,7 +9,7 @@ namespace Service.Impl
     public class AIService
     {
         private readonly HttpClient _httpClient;
-        private readonly string _apiKey = "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"; 
+        private readonly string _apiKey = "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"; 
         private readonly string _baseUrl = "https://openrouter.ai/api/v1/chat/completions";
         private readonly IAuctionProductService auctionProductService;
         public AIService(HttpClient httpClient)

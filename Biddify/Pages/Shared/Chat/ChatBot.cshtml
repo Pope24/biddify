@@ -2,36 +2,52 @@
 @page
 @model Domain.Models.ChatMessageModel
 
-<!-- Nút tròn nổi để mở/tắt chat -->
-<!-- Nút mở/tắt chat -->
+
 <button id="chatToggleBtn"
         onclick="toggleChat()"
         class="w-[60px] h-[60px] fixed bottom-4 right-4 z-50 rounded-full bg-gray-700 shadow-xl hover:bg-black flex items-center justify-center">
     <span id="chatIcon" class="material-symbols-outlined text-white text-3xl">chat_bubble</span>
 </button>
 
-<!-- Khung chat chính -->
-<div id="chatBox"
-     class="hidden fixed bottom-24 right-4 w-1/4 min-w-[450px] h-[calc(100vh-200px)] bg-white rounded shadow-lg overflow-hidden z-50 flex flex-col">
 
-    <!-- Header -->
+<div id="chatBox"
+     class="fixed bottom-24 right-4 w-1/4 min-w-[450px] h-[calc(100vh-200px)] text-white rounded shadow-lg overflow-hidden z-50 flex flex-col
+     opacity-0 scale-0 pointer-events-none origin-bottom-right transition-all duration-300 ease-out">
+
+
+
+
+
     <div class="bg-gray-700 text-white px-4 py-3 font-semibold flex justify-between items-center">
         Support Chat
         <button onclick="toggleChat()" class="text-white text-xl">&times;</button>
     </div>
 
-    <!-- Nội dung -->
+
     <div id="faqContainer" class="flex-1 overflow-y-auto p-4 text-sm bg-white ">
         <!-- Nội dung động -->
     </div>
 
-    <!-- Nhập liệu -->
-    <div id="inputChat" class="flex p-3 border-t hidden">
 
-        <input type="text" id="chatInput" class="flex-grow px-3 py-2 border rounded-l text-sm" placeholder="Nhập câu hỏi...">
-        <button onclick="sendMessage()" class="bg-blue-500 text-white px-4 rounded-r">Gửi</button>
+    <!-- Wrapper input -->
+    <div id="inputChat"
+         class="flex items-center px-3 py-2 border-2 border-gray-400 rounded-full transition-all duration-200 focus-within:border-indigo-500 hover:border-indigo-500 group">
+
+       
+        <input id="chatInput"
+               type="text"
+               placeholder="Message..."
+               class="flex-grow bg-transparent text-sm text-gray-800 placeholder-gray-500 focus:outline-none" />
+
+       
+        <button onclick="sendMessage()"
+                class="ml-2 w-10 h-10 flex items-center justify-center rounded-full bg-gray-100 group-hover:bg-indigo-500 transition-all duration-200">
+            <span class="material-symbols-outlined ml-1  text-gray-600 group-hover:text-white transition">send</span>
+        </button>
+
     </div>
 
+    
 </div>
 
 </div>
@@ -48,13 +64,23 @@
     function toggleChat() {
         const chatBox = document.getElementById('chatBox');
         const icon = document.getElementById('chatIcon');
-        chatBox.classList.toggle('hidden');
-        icon.textContent = chatBox.classList.contains('hidden') ? 'chat_bubble' : 'close';
+        const isOpen = chatBox.classList.contains('scale-100');
 
-        if (!chatBox.classList.contains('hidden')) {
+        if (isOpen) {
+       
+            chatBox.classList.remove('opacity-100', 'scale-100');
+            chatBox.classList.add('opacity-0', 'scale-0', 'pointer-events-none');
+            icon.textContent = 'chat_bubble';
+        } else {
+           
+            chatBox.classList.remove('opacity-0', 'scale-0', 'pointer-events-none');
+            chatBox.classList.add('opacity-100', 'scale-100');
+            icon.textContent = 'close';
             loadRootMenu();
         }
     }
+
+
 
     function loadRootMenu() {
         state = { level: 'root', group: null };
@@ -72,10 +98,11 @@
     <!-- Các nút lựa chọn -->
     <div class="flex flex-col items-center space-y-4 mt-8">
         <!-- Nút FAQ -->
-        <button onclick="loadFaqTitles()"
-            class="group flex items-center justify-between bg-white rounded-lg px-4 py-2 shadow-md hover:shadow-lg text-black cursor-pointer w-full max-w-sm transition-all duration-200 hover:text-purple-700">
+    <button onclick="loadFaqTitles()"
+        class="group flex items-center justify-between bg-gray-700 hover:bg-gray-600 rounded-lg px-4 py-2 shadow-md hover:shadow-lg text-white cursor-pointer w-full max-w-sm transition-all duration-200">
+
             <span class="font-semibold text-base">FAQ Questions</span>
-            <svg class="w-8 h-12 text-purple-600 ml-2 group-hover:text-purple-800" fill="currentColor" viewBox="0 0 24 24">
+            <svg class="w-8 h-12 text-indigo-600 ml-2 group-hover:text-indigo-800" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M10 17l5-5-5-5v10z" />
             </svg>
         </button>
@@ -84,7 +111,7 @@
         <button onclick="startAiChat()"
             class="group flex items-center justify-between bg-white rounded-lg px-4 py-2 shadow-md hover:shadow-lg text-black cursor-pointer w-full max-w-sm transition-all duration-200 hover:text-purple-700">
             <span class="font-semibold text-base">Send message with AI</span>
-            <svg class="w-8 h-12 text-purple-600 ml-2 group-hover:text-purple-800" fill="currentColor" viewBox="0 0 24 24">
+            <svg class="w-8 h-12 text-indigo-600 ml-2 group-hover:text-indigo-800" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M10 17l5-5-5-5v10z" />
             </svg>
         </button>
@@ -107,11 +134,12 @@
             // Bot hỏi: bạn muốn chọn chủ đề nào?
             const botMsg = document.createElement('div');
             botMsg.className = 'flex justify-start mb-2';
-            botMsg.innerHTML = `
-                <div class="bg-gray-100 text-gray-800 px-4 py-2 rounded-2xl max-w-[80%] text-sm">
-                    Bạn muốn chọn chủ đề nào?
-                </div>
-            `;
+              botMsg.innerHTML = `
+        <div class="bg-gray-700 text-gray-100 px-4 py-2 rounded-2xl max-w-[80%] text-sm">
+          Choose your title you want!
+        </div>
+    `;
+
             container.appendChild(botMsg);
 
             const response = await fetch(CHAT_API, {
@@ -129,11 +157,12 @@
                 const titleBtn = document.createElement('div');
                 titleBtn.className = 'flex justify-end mb-2';
                 titleBtn.innerHTML = `
-                    <div onclick="loadQuestions('${safeTitle}')"
-                         class="bg-purple-600 text-white px-4 py-2 rounded-2xl max-w-[80%] text-sm cursor-pointer hover:bg-purple-700 transition">
-                        ${title}
-                    </div>
-                `;
+        <div onclick="loadQuestions('${safeTitle}')"
+             class="bg-indigo-600 text-white px-4 py-2 rounded-2xl max-w-[80%] text-sm cursor-pointer hover:bg-indigo-700 transition">
+            ${title}
+        </div>
+    `;
+
                 container.appendChild(titleBtn);
             });
 
@@ -162,7 +191,7 @@
             const userTitle = document.createElement('div');
             userTitle.className = 'flex justify-end mb-2';
             userTitle.innerHTML = `
-                <div class="bg-purple-600 text-white px-4 py-2 rounded-2xl max-w-[80%] text-sm">
+               <div class="bg-indigo-600 text-white px-4 py-2 rounded-2xl max-w-[80%] text-sm">
                     ${groupName}
                 </div>
             `;
@@ -172,10 +201,11 @@
             const botMsg = document.createElement('div');
             botMsg.className = 'flex justify-start mb-2';
             botMsg.innerHTML = `
-                <div class="bg-gray-100 text-gray-800 px-4 py-2 rounded-2xl italic max-w-[80%] text-sm">
-                    Bạn hãy chọn một câu hỏi cho bạn.
-                </div>
-            `;
+        <div class="bg-gray-700 text-gray-100 px-4 py-2 rounded-2xl  max-w-[80%] text-sm">
+          Pick a quesstion 
+        </div>
+    `;
+
             container.appendChild(botMsg);
 
             // Load câu hỏi
@@ -193,12 +223,13 @@
                 const safeQuestion = item.question.replace(/'/g, "\\'");
                 const questionEl = document.createElement('div');
                 questionEl.className = 'flex justify-end mb-2';
-                questionEl.innerHTML = `
-                    <div onclick="showAnswer('${safeQuestion}')"
-                         class="bg-purple-500 text-white px-4 py-2 rounded-2xl max-w-[80%] text-sm cursor-pointer hover:bg-purple-700 transition">
-                        ${item.question}
-                    </div>
-                `;
+                  questionEl.innerHTML = `
+        <div onclick="showAnswer('${safeQuestion}')"
+           class="bg-indigo-600 text-white px-4 py-2 rounded-2xl max-w-[80%] text-sm cursor-pointer hover:bg-indigo-700 transition">
+        ${item.question}
+        </div>
+    `;
+
                 container.appendChild(questionEl);
             });
 
@@ -231,11 +262,13 @@
             // Hiện câu hỏi như người dùng
             const userMsg = document.createElement('div');
             userMsg.className = 'flex justify-end mb-2';
-            userMsg.innerHTML = `
-                <div class="bg-purple-600 text-white px-4 py-2 rounded-2xl max-w-[80%] text-sm">
-                    ${question}
-                </div>
-            `;
+         // Ví dụ thay bg-purple-600 bằng bg-blue-600
+    userMsg.innerHTML = `
+        <div class="bg-indigo-600 text-white px-4 py-2 rounded-2xl max-w-[80%] text-sm">
+            ${question}
+        </div>
+    `;
+
             container.appendChild(userMsg);
             container.scrollTop = container.scrollHeight;
 
@@ -251,32 +284,36 @@
             // Hiện câu trả lời
             const botMsg = document.createElement('div');
             botMsg.className = 'flex justify-start mb-2';
-            botMsg.innerHTML = `
-                <div class="bg-gray-100 text-gray-800 px-4 py-2 rounded-2xl max-w-[80%] text-sm">
-                    ${result.response}
-                </div>
-            `;
+              botMsg.innerHTML = `
+        <div class="bg-gray-700 text-gray-100 px-4 py-2 rounded-2xl max-w-[80%] text-sm">
+            ${result.response}
+        </div>
+    `;
+
             container.appendChild(botMsg);
 
             // Thêm 2 bong bóng tuỳ chọn: quay lại title và quay lại trang chính
             const backToTitles = document.createElement('div');
             backToTitles.className = 'flex justify-start mb-2';
-            backToTitles.innerHTML = `
-                <div onclick="loadFaqTitles()"
-                     class="bg-white border border-gray-300 text-gray-800 px-4 py-2 rounded-2xl max-w-[80%] text-sm cursor-pointer hover:bg-gray-200 transition">
-                    ⬅ Quay lại danh sách tiêu đề
-                </div>
-            `;
+              backToTitles.innerHTML = `
+        <div onclick="loadFaqTitles()"
+             class="mt-4 flex items-center space-x-2 bg-gray-700 text-white px-4 py-2 rounded-2xl max-w-[80%] text-sm cursor-pointer hover:bg-gray-600 transition">
+            <span class="material-symbols-outlined text-base">low_priority</span>
+            <span>Go back title</span>
+        </div>
+    `;
+
             container.appendChild(backToTitles);
 
             const backToHome = document.createElement('div');
             backToHome.className = 'flex justify-start mb-2';
             backToHome.innerHTML = `
-                <div onclick="loadRootMenu()"
-                     class="bg-white border border-gray-300 text-gray-800 px-4 py-2 rounded-2xl max-w-[80%] text-sm cursor-pointer hover:bg-gray-200 transition">
-                    ⬅ Trở về trang chính
-                </div>
-            `;
+        <div onclick="loadRootMenu()"
+             class=" mt-2 flex items-center space-x-2 bg-gray-700 text-white px-4 py-2 rounded-2xl max-w-[80%] text-sm cursor-pointer hover:bg-gray-600 transition">
+            <span class="material-symbols-outlined text-base">low_priority</span>
+            <span>Go back home</span>
+        </div>
+    `;
             container.appendChild(backToHome);
 
             container.scrollTop = container.scrollHeight;
@@ -306,9 +343,15 @@
       function startAiChat() {
         state = { level: 'ai', group: null };
         const container = document.getElementById('faqContainer');
-        container.innerHTML = `<div class="text-left mb-2">
-            <button onclick="loadRootMenu()" class="text-blue-500">⬅ Quay lại</button>
-        </div>`;
+        container.innerHTML = `
+    <div class="text-left mb-4">
+      <button onclick="loadRootMenu()"
+              class="flex items-center space-x-1 text-sm text-indigo-600 hover:text-indigo-300 transition">
+        <span class="material-symbols-outlined text-lg">arrow_back</span>
+        <span>Back to Home</span>
+      </button>
+    </div>`;
+
 
         const input = document.getElementById('inputChat');
         if (input) {
@@ -337,8 +380,8 @@
 
         const container = document.getElementById('faqContainer');
         container.innerHTML += `
-            <div class="flex justify-end mb-2">
-                <div class="bg-blue-500 text-white px-3 py-2 rounded-lg max-w-[80%]">${message}</div>
+             <div class="flex justify-end mb-2">
+        <div class="bg-indigo-600 text-white px-3 py-2 rounded-lg max-w-[80%]">${message}</div>
             </div>
         `;
         input.value = "";
@@ -356,13 +399,14 @@
             }
 
             const result = await response.json();
-            container.innerHTML += `
-                <div class="flex justify-start mb-2">
-                    <div class="bg-gray-200 text-gray-800 px-3 py-2 rounded-lg max-w-[80%]">
-                        ${result.response}
-                    </div>
-                </div>
-            `;
+           container.innerHTML += `
+        <div class="flex justify-start mb-2">
+            <div class="bg-gray-700 text-white px-4 py-3 rounded-2xl max-w-[80%] text-sm">
+                ${result.response}
+            </div>
+        </div>
+    `;
+
             container.lastElementChild?.scrollIntoView({ behavior: 'smooth' });
         } catch (error) {
             alert("Lỗi khi gửi tin nhắn: " + error.message);
@@ -371,5 +415,18 @@
     }
 
     window.onload = loadRootMenu;
+
+    /*ENter */
+        window.onload = function () {
+        loadRootMenu();
+
+        document.getElementById('chatInput').addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+    };
+
 </script>
 
