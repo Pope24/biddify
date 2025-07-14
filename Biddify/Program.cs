@@ -60,6 +60,9 @@ builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddScoped<ICommentService, CommentService>();
 builder.Services.AddScoped<FAQService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+//builder.Services.AddScoped<EmailOtpSender>();
 
 builder.Services.AddRazorPages();
 builder.Services.AddControllers();
