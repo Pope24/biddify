@@ -15,14 +15,17 @@ namespace Biddify.Pages.Admin.Auctions
         public IndexModel(IAuctionProductService auctionProductService)
         {
             this.auctionProductService = auctionProductService;
+            AuctionItems = new List<AuctionProductEntity>(); // Initialize to empty list
         }
 
         public List<AuctionProductEntity> AuctionItems { get; set; }
+        public int TotalItems { get; set; }
 
         public async Task OnGetAsync()
         {
-            AuctionItems =
-                (List<AuctionProductEntity>)await auctionProductService.GetAuctionProductsAsync();
+            var result = await auctionProductService.GetAuctionProductsAsync();
+            AuctionItems = result.Items.ToList();
+            TotalItems = result.TotalCount;
         }
 
         public async Task<IActionResult> OnPostDeleteAsync(string id)

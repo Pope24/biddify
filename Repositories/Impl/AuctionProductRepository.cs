@@ -48,31 +48,31 @@ namespace Repository.Impl
         }
 
         public async Task<IEnumerable<AuctionProductEntity>> GetAuctionProductsAsync(
-          string search = "",
-          EAuctionStatus? status = null,
-          ECategoryProduct? category = null,
-          bool? isCurrent = null)
+            string search = "", 
+            EAuctionStatus? status = null, 
+            ECategoryProduct? category = null, 
+            bool? isCurrent = null)
         {
             var query = dbContext.AuctionProducts.AsQueryable();
-
+            
             // Apply search filter
             if (!string.IsNullOrWhiteSpace(search))
             {
                 query = query.Where(p => p.Title.Contains(search.Trim()));
             }
-
+            
             // Apply status filter
             if (status.HasValue)
             {
                 query = query.Where(p => p.Status == status.Value);
             }
-
+            
             // Apply category filter
             if (category.HasValue)
             {
                 query = query.Where(p => p.CategoryProduct == category.Value);
             }
-
+            
             // Apply time filter
             if (isCurrent.HasValue)
             {
@@ -80,8 +80,8 @@ namespace Repository.Impl
                 if (isCurrent.Value)
                 {
                     // Current auctions: start time <= now < end time
-                    query = query.Where(p =>
-                        p.StartTime <= currentTime &&
+                    query = query.Where(p => 
+                        p.StartTime <= currentTime && 
                         p.EndTime > currentTime);
                 }
                 else
@@ -90,7 +90,7 @@ namespace Repository.Impl
                     query = query.Where(p => p.StartTime > currentTime);
                 }
             }
-
+            
             return await query.ToListAsync();
         }
 

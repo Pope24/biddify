@@ -1,0 +1,23 @@
+{
+    "family": "biddify-task",
+    "networkMode": "awsvpc",
+    "executionRoleArn": "arn:aws:iam::208202859658:role/ecsTaskExecutionRole",
+    "containerDefinitions": [
+        {
+            "name": "biddify-cluster-container",
+            "image": "208202859658.dkr.ecr.ap-southeast-1.amazonaws.com/biddify-app:latest",
+            "portMappings": [
+                {
+                    "containerPort": 80,
+                    "protocol": "tcp"
+                }
+            ],
+            "essential": true
+        }
+    ],
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "cpu": "256",
+    "memory": "512"
+}
