@@ -24,6 +24,7 @@ public class AuctionDetailModel : PageModel
         this.bidService = _bidService;
         this.bidHubContext = _bidHubContext;
         this.commentService = _commentService;
+        AuctionItems = new List<AuctionProductEntity>(); // Initialize to empty list
     }
 
     public AuctionProductEntity Item { get; set; }
@@ -32,9 +33,16 @@ public class AuctionDetailModel : PageModel
     public async Task<IActionResult> OnGetAsync(string id)
     {
         Item = await auctionProductService.GetAuctionProductByIdAsync(id);
-        AuctionItems = (List<AuctionProductEntity>)await auctionProductService.GetAuctionProductsAsync();
+        
+        // Get related auctions (same category)
+        var result = await auctionProductService.GetAuctionProductsAsync(
+            category: Item.CategoryProduct,
+            pageSize: 3); // Limit to 3 related items
+            
+        AuctionItems = result.Items.Where(a => a.Id != id).ToList(); // Exclude current item
         return Page();
     }
+    
     public async Task<IActionResult> OnPostBidAsync(decimal AmountBid, string ItemId)
     {
         var user = await userManager.GetUserAsync(User);

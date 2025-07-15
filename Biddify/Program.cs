@@ -1,5 +1,6 @@
 using System;
 using Biddify.SignalR;
+using Common.Middleware;
 using DataAccess;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -67,10 +68,15 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+// Use global exception handler for API endpoints
+app.UseGlobalExceptionHandler();
+// Keep the default exception handler for Razor Pages
+app.UseExceptionHandler("/Error");
+
 app.MapHub<AuctionProductHub>("/AuctionProductHub");
 app.MapHub<BidHub>("/BidHub");
 app.MapHub<CommentHub>("/CommentHub");
