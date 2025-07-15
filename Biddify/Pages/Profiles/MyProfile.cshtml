@@ -82,12 +82,12 @@
                     <div class="uppercase">Transaction History</div>
                 </button>
             </li>
-            <li>
-                <button class="w-full text-left bg-white hover:bg-red-100 p-4 rounded-lg flex items-center text-base font-medium shadow-sm text-red-600" onclick="loadTab('settings')">
-                    <span class="material-symbols-outlined mr-4 text-2xl">logout</span>
-                    <div class="uppercase">Log Out</div>
-                </button>
-            </li>
+            @* <li> *@
+            @*     <button class="w-full text-left bg-white hover:bg-red-100 p-4 rounded-lg flex items-center text-base font-medium shadow-sm text-red-600" onclick="loadTab('settings')"> *@
+            @*         <span class="material-symbols-outlined mr-4 text-2xl">logout</span> *@
+            @*         <div class="uppercase">Log Out</div> *@
+            @*     </button> *@
+            @* </li> *@
         </ul>
     </div>
 
@@ -173,6 +173,7 @@
 </div>
 
 @section Scripts {
+    <script src="~/js/password-change.js"></script>
     <script>
         function loadTab(tabName) {
             fetch(`/Profile?handler=LoadPartial&tab=${tabName}`)
@@ -241,5 +242,6 @@
                 }
             });
         }
+
     </script>
 }

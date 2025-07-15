@@ -1,0 +1,59 @@
+  {
+    "FAQQuestion": {
+      "BiddingProcess": [
+        {
+          "Question": "How do I place a bid?",
+          "Answer": "Simply register an account, log in, go to the product detail page, and enter your bid amount."
+        },
+        {
+          "Question": "Can I cancel a bid after placing it?",
+          "Answer": "No, all bids are final and binding once submitted."
+        },
+        {
+          "Question": "How will I know if I win an auction?",
+          "Answer": "You will receive an email and a notification on your dashboard if you are the highest bidder when the auction ends."
+        }
+      ],
+      "AccountAndSecurity": [
+        {
+          "Question": "How can I reset my password?",
+          "Answer": "Click on 'Forgot Password' on the login page and follow the instructions. You can also go to your profile > Security Management to update your password."
+        },
+        {
+          "Question": "Is my payment information secure?",
+          "Answer": "Yes, all transactions are encrypted and processed through secure third-party payment providers."
+        }
+      ],
+      "SellingItems": [
+        {
+          "Question": "Can I sell my items on this platform?",
+          "Answer": "Yes, registered users can apply to become a seller by submitting an application on their dashboard."
+        },
+        {
+          "Question": "Are there any fees for selling?",
+          "Answer": "We charge a small rate on each successful sale. Details are available on our seller policy page."
+        }
+      ],
+      "Payments": [
+        {
+          "Question": "What payment methods are accepted?",
+          "Answer": "We accept online banking gateways."
+        },
+        {
+          "Question": "When do I have to pay for an item I win?",
+          "Answer": "You must complete the payment within 48 hours after winning the auction."
+        }
+      ],
+      "ShippingAndDelivery": [
+        {
+          "Question": "Who handles shipping?",
+          "Answer": "Shipping is handled either by the seller or our trusted delivery partners. Details are provided in the auction listing."
+        },
+        {
+          "Question": "How long does shipping take?",
+          "Answer": "Shipping time depends on your location and the seller’s processing time, usually between 3–10 business days."
+        }
+      ]
+    }
+
+  }

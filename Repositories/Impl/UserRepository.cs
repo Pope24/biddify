@@ -1,4 +1,5 @@
 ﻿using DataAccess;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,14 +10,32 @@ namespace Repository.Impl
 {
     public class UserRepository : IUserRepository
     {
-        public Task<UserEntity> GetUserByEmailAsync(string email)
+        private readonly BiddifyDbContext dbContext;
+
+        public UserRepository(BiddifyDbContext context)
         {
-            throw new NotImplementedException();
+            dbContext = context;
         }
 
-        public Task<bool> UpdateUserAsync(UserEntity entity)
+        public async Task<UserEntity> GetUserByEmailAsync(string email)
         {
-            throw new NotImplementedException();
+            return await dbContext.Users
+      .Where(u => u.NormalizedEmail == email.ToUpper())
+      .FirstOrDefaultAsync();
+
+        }
+
+        public async Task<bool> UpdateUserAsync(UserEntity entity)
+        {
+            var existing = await dbContext.Users.FindAsync(entity.Id);
+            if (existing == null) return false;
+
+            existing.DisplayName = entity.DisplayName;
+            //existing.Email = entity.Email;
+
+            await dbContext.SaveChangesAsync();
+            return true;
         }
     }
+
 }

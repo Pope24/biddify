@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Repository;
 using Service;
 
 namespace Biddify.Pages.Profiles
@@ -11,11 +12,13 @@ namespace Biddify.Pages.Profiles
         private readonly UserManager<UserEntity> _userManager;
         private readonly IPaymentService paymentService;
         private readonly IHttpContextAccessor _contextAccessor;
+        private readonly IUserRepository _userRepository;
         public UserEntity CurrentUser { get; set; }
 
-        public MyProfileModel(UserManager<UserEntity> userManager, IPaymentService _paymentService, IHttpContextAccessor contextAccessor)
+        public MyProfileModel(UserManager<UserEntity> userManager, IPaymentService _paymentService, IHttpContextAccessor contextAccessor, IUserRepository userRepository)
         {
             _userManager = userManager;
+            _userRepository = userRepository;
             paymentService = _paymentService;
             _contextAccessor = contextAccessor;
         }
@@ -24,13 +27,17 @@ namespace Biddify.Pages.Profiles
 
         public async Task<IActionResult> OnGetAsync()
         {
-            CurrentUser = await _userManager.GetUserAsync(User);
+            CurrentUser = await _userRepository.GetUserByEmailAsync(User.Identity.Name);
 
             return Page();
         }
         public async Task<IActionResult> OnGetLoadPartialAsync(string tab)
         {
+
             var user = await _userManager.GetUserAsync(User);
+
+
+         
             switch (tab)
             {
                 case "info":
