@@ -1,7 +1,7 @@
 ﻿using DataAccess;
 using Microsoft.AspNetCore.SignalR;
 
-namespace Biddify.SignalR
+namespace Service.SignalR
 {
     public class AuctionProductHub : Hub
     {
@@ -32,7 +32,6 @@ namespace Biddify.SignalR
         }
         public async Task NotifyWinner(string auctionId, string winnerName, string productName)
         {
-            Console.WriteLine($"Notifying winner for AuctionId: {auctionId}, Winner: {winnerName}, Product: {productName}");
             await Clients.Group(auctionId).SendAsync("AuctionEnded", winnerName, productName);
         }
     }
