@@ -33,9 +33,23 @@ namespace Service.Impl
             await transactionRepository.AddTransactionAsync(transaction);
         }
 
+        public async Task<TransactionEntity> GetTransactionByCodeAsync(long code)
+        {
+            return await transactionRepository.GetTransactionByCodeAsync(code);
+        }
+
+        public async Task<IEnumerable<TransactionEntity>> GetTransactionsByUserIdAsync(string userId, string? search = "")
+        {
+            return await transactionRepository.GetTransactionsByUserIdAsync(userId, search);
+        }
+
         public async Task<bool> IsExistTransactionAsync(long orderCode)
         {
             return await transactionRepository.IsExistTransactionAsync(orderCode);
+        }
+        public async Task UpdateTransactionAsync(TransactionEntity entity)
+        {
+            await transactionRepository.UpdateTransactionAsync(entity);
         }
     }
 }

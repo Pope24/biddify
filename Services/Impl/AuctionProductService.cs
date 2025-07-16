@@ -71,5 +71,9 @@ namespace Service.Impl
         {
             return auctionProductRepository.DeleteAuctionProductAsync(id);
         }
+        public async Task<IEnumerable<AuctionProductEntity>> GetExpiredUnprocessedAuctionsAsync()
+        {
+            return await auctionProductRepository.GetExpiredUnprocessedAuctionsAsync();
+        }
     }
 }

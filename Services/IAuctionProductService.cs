@@ -21,5 +21,6 @@ namespace Service
         Task<bool> AddAuctionProductAsync(AuctionProductEntity entity);
         Task<bool> UpdateAuctionProductAsync(AuctionProductEntity entity);
         Task<bool> DeleteAuctionProductAsync(string id);
+        Task<IEnumerable<AuctionProductEntity>> GetExpiredUnprocessedAuctionsAsync();
     }
 }

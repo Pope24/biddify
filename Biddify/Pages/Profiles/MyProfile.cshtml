@@ -1,5 +1,7 @@
 ﻿@page "/Profile"
 @model Biddify.Pages.Profiles.MyProfileModel
+@using Common
+@using Domain.Enums
 @{
     ViewData["Title"] = "MyProfile";
     Layout = "~/Pages/Shared/_Layout.cshtml";
@@ -138,7 +140,7 @@
                                        id="amount" name="DepositAmount" min="1" required />
                                 <span class="input-group-text bg-white border-0">$</span>
                             </div>
-
+                            <input type="hidden" name="TransactionType" value="@EnumHelper.ToDisplayString(ETransactionType.Deposit)"/>
                             <div class="text-primary my-3 d-flex align-items-center">
                                 <span>=</span>
                                 <span class="ms-2" id="vndAmount">0 VND</span>
@@ -182,11 +184,6 @@
                     document.getElementById('profile-content').innerHTML = html;
                 });
         }
-
-
-
-
-
        // RealTime money
                 const access_key = '28584fe567b15102cf5c394cfeb97954';
         const endpoint = 'convert';
@@ -243,5 +240,20 @@
             });
         }
 
+        $(document).on('click', '.show-detail-panel-btn', function () {
+            const auctionProductId = $(this).data('auction-product-id');
+            console.log("Clicked:", auctionProductId);
+
+            fetch(`/Profile?handler=AuctionDetails&id=${auctionProductId}`)
+                .then(response => response.text())
+                .then(html => {
+                     document.getElementById('profile-content').innerHTML = html;
+                })
+                .catch(err => {
+                     document.getElementById('profile-content').innerHTML = "<p class='text-red-500'>Lỗi khi tải chi tiết</p>";
+                    console.error(err);
+                });
+
+        });
     </script>
 }

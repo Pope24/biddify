@@ -285,6 +285,7 @@
 <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+<audio id="win-audio" src="/sounds/victory.mp3" preload="auto"></audio>
 <script>
     @* ChinhLV - SignalR listen add new bid event *@
     const connection = new signalR.HubConnectionBuilder()
@@ -411,7 +412,7 @@
             }
 
             const h = String(Math.floor(diff / 3_600_000)).padStart(2, '0');
-            const m = String(Math.floor((diff % 3_600_000) / 60_000)).padStart(2, '0');
+            const m = String(Math.floor((diff % 3_600_000) / 60_000)).padStart(2, '0');  
             const s = String(Math.floor((diff % 60_000) / 1_000)).padStart(2, '0');
             el.textContent = `${h} : ${m} : ${s}`;
         }
@@ -510,6 +511,19 @@
         });
         window.dispatchEvent(event);
     }
+    @* ChinhLV - Realtime winning *@
+        const auctionProductConnection = new signalR.HubConnectionBuilder()
+        .withUrl(`/AuctionProductHub?auctionId=${auctionId}`)
+        .build();
+
+    auctionProductConnection.on("AuctionEnded", (winnerName, productName) => {
+        const message = `Congratulations ${winnerName} for winning the auction for product ${productName}!`;
+        console.log(message);
+    });
+
+    auctionProductConnection.start()
+        .then(() => console.log("Connected to AuctionProductHub"))
+        .catch(err => console.error("AuctionProductHub error:", err));
 
 
 

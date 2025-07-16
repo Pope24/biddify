@@ -58,6 +58,18 @@ namespace DataAccess
                     v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
                     v => JsonSerializer.Deserialize<List<string>>(v, (JsonSerializerOptions)null)
                 );
+            modelBuilder.Entity<AuctionProductEntity>()
+                .HasOne(ap => ap.WinningDetails)
+                .WithOne(w => w.AuctionProduct)
+                .HasForeignKey<WinningEntity>(w => w.AuctionProductId);
+
+            modelBuilder.Entity<TransactionEntity>()
+                .Property(t => t.Metadata)
+                  .HasColumnType("jsonb")
+                  .HasConversion(
+                      v => JsonSerializer.Serialize(v, new JsonSerializerOptions()),
+                      v => JsonSerializer.Deserialize<TransactionMetadata>(v, new JsonSerializerOptions())
+                  );
         }
     }
 }
