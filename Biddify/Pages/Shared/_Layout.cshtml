@@ -215,15 +215,15 @@
         <main role="main" class="">
             @RenderBody()
         </main>
-        <main class="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2">
-            @await Html.PartialAsync("Chat/ChatBot", chatModel)
-        </main>
+         <main class="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2"> 
+             @await Html.PartialAsync("Chat/ChatBot", chatModel) 
+         </main>      
 
 
     </div>
 
     <!-- FOOTER -->
-    <footer class="footer mt-auto">
+   @*@ <footer class="footer mt-auto">
         <div class="container">
             <div class="row">
                 <!-- Subscribe -->
@@ -278,7 +278,7 @@
             <hr class="bg-light" />
             <div class="text-center text-muted">&copy; 2025 - biddify - <a href="#" class="text-muted">Privacy</a></div>
         </div>
-    </footer>
+    </footer>   *@
 
     @* ====================== OFF-CANVAS / SIDEBAR ====================== *@
     <div class="offcanvas offcanvas-end" tabindex="-1" id="sideMenu">

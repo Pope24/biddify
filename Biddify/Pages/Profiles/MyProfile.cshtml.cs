@@ -35,9 +35,6 @@ namespace Biddify.Pages.Profiles
         {
 
             var user = await _userManager.GetUserAsync(User);
-
-
-         
             switch (tab)
             {
                 case "info":
@@ -53,6 +50,38 @@ namespace Biddify.Pages.Profiles
                     return Content("Không tìm thấy nội dung.");
             }
         }
+        [BindProperty]
+        public UserEntity UserInfo { get; set; }
+
+        public async Task<IActionResult> OnPostUpdateProfileAsync()
+        {
+            if (!ModelState.IsValid)
+                return Page(); 
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return NotFound();
+
+            user.DisplayName = UserInfo.DisplayName;
+          
+
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+
+                return Page();
+            }
+
+            TempData["SuccessMessage"] = "Profile updated successfully.";
+
+            return RedirectToPage(); 
+        }
+
+
         public async Task<IActionResult> OnPostRequestDepositAsync()
         {
             string description = "Deposit via PayOS";

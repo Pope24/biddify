@@ -1,56 +1,58 @@
-﻿using DataAccess;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Repository;
-using System.Diagnostics;
+﻿//using DataAccess;
+//using Microsoft.AspNetCore.Identity;
+//using Microsoft.AspNetCore.Mvc;
+//using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Biddify.Pages.Profiles.PartialProfile
-{
-    public class ProfileInforModel : PageModel
-    {
-        private readonly IUserRepository _userRepository;
-        private readonly UserManager<UserEntity> _userManager;
-        public ProfileInforModel(IUserRepository userRepository, UserManager<UserEntity> userManager)
-        {
-            _userRepository = userRepository;
-            _userManager = userManager;
-        }
+//namespace Biddify.Pages.Profiles.PartialProfile
+//{
+//    public class ProfileInforModel : PageModel
+//    {
+//        private readonly UserManager<UserEntity> _userManager;
 
+//        public ProfileInforModel(UserManager<UserEntity> userManager)
+//        {
+//            _userManager = userManager;
+//        }
 
-        [BindProperty]
-        public UserEntity UserInfo { get; set; }
+//        [BindProperty]
+//        public UserEntity UserInfo { get; set; }
 
-        public async Task<IActionResult> OnGetAsync()
-        {
-            var userIdentity = await _userManager.GetUserAsync(User);
+//        public async Task<IActionResult> OnGetAsync()
+//        {
+//            var user = await _userManager.GetUserAsync(User);
+//            if (user == null)
+//                return NotFound();
 
+//            UserInfo = user;
+//            return Page(); // hoặc Partial nếu dùng trong component
+//        }
 
-            //var user = await _userRepository.GetUserByEmailAsync(userIdentity.Email);
+//        public async Task<IActionResult> OnPostAsync()
+//        {
+//            if (!ModelState.IsValid)
+//                return Page();
 
-            return Partial("_ProfileInfor", userIdentity); 
-        }
+//            var user = await _userManager.GetUserAsync(User);
+//            if (user == null)
+//                return NotFound();
 
-        public async Task<IActionResult> OnPostAsync()
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+//            // Cập nhật thông tin
+//            user.DisplayName = UserInfo.DisplayName;
+//            user.Email = UserInfo.Email;
+//            user.UserName = UserInfo.Email; // nếu dùng Email làm UserName
 
-            //var existingUser = await _userRepository.GetUserByEmailAsync(UserInfo.Email);
-            //if (existingUser == null)
-            //    return NotFound();
+//            var result = await _userManager.UpdateAsync(user);
+//            if (!result.Succeeded)
+//            {
+//                foreach (var error in result.Errors)
+//                {
+//                    ModelState.AddModelError(string.Empty, error.Description);
+//                }
+//                return Page();
+//            }
 
-            //existingUser.DisplayName = UserInfo.DisplayName;
-            //existingUser.Email = UserInfo.Email;
-
-            var success = await _userRepository.UpdateUserAsync(UserInfo);
-            if (!success)
-                return BadRequest("Update failed.");
-
-            return Partial("_ProfileInfor", UserInfo);
-        }
-
-    }
-
-}
+//            TempData["SuccessMessage"] = "Profile updated successfully.";
+//            return RedirectToPage(); // hoặc return Partial nếu bạn dùng trong component
+//        }
+//    }
+//}

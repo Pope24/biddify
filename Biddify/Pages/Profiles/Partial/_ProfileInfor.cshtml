@@ -64,23 +64,23 @@
         <button onclick="hideEditForm()" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
     </div>
 
-    <form method="post">
+    <form method="post" asp-page-handler="UpdateProfile">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
-                <label class="block text-sm font-medium text-gray-600 mb-1">Display Name</label>
-                <input asp-for="@Model.DisplayName" class="w-full border rounded-md p-2" />
+                <label class="block text-sm  font-medium text-gray-600 mb-1">Display Name</label>
+                <input asp-for="DisplayName" class="w-full border rounded-md p-2" />
             </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-600 mb-1">Email Address</label>
-                <input asp-for="@Model.Email" type="email" class="w-full border rounded-md p-2" />
+            <div class="hidden">
+                <label class="block  text-sm font-medium text-gray-600 mb-1">Email Address</label>
+                <input asp-for="Email" type="email" class="w-full border rounded-md p-2" />
             </div>
         </div>
-
         <div class="mt-8 flex justify-end space-x-2">
-            <button type="button" onclick="hideEditForm()" class="px-4 py-2 rounded-md border border-gray-300 text-gray-600 hover:bg-gray-100">Close</button>
-            <button type="submit" class="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700">Save Changes</button>
+            <button type="submit" class="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700">Save</button>
         </div>
     </form>
+
+
 </div>
 
 <script>
