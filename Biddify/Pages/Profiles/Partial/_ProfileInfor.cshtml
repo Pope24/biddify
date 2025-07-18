@@ -1,8 +1,7 @@
 ﻿@model DataAccess.UserEntity
-<div class="p-6 max-w-6xl mx-auto " id="informationForm">
- 
 
-    <h2 class="text-2xl  text-uppercase font-semibold mb-6">Profile</h2>
+<div class="p-6 max-w-6xl mx-auto" id="informationForm">
+    <h2 class="text-2xl font-semibold mb-6 uppercase">Profile</h2>
 
     <!-- Profile Header -->
     <div class="bg-white p-6 rounded-lg shadow mb-6">
@@ -32,25 +31,30 @@
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700">
             <div>
-                <span class="font-medium">Display Name</span><br>@Model.DisplayName
+                <span class="font-medium">Display Name</span><br />
+                @Model.DisplayName
             </div>
             <div>
-                <span class="font-medium">Email</span><br>@Model.Email
+                <span class="font-medium">Email</span><br />
+                @Model.Email
             </div>
             <div>
-                <span class="font-medium">Account Status</span><br><a href="mailto:randomuser@pimjo.com" class="text-blue-500 hover:underline">@Model.Status</a>
+                <span class="font-medium">Account Status</span><br />
+                <span class="text-blue-500">@Model.Status</span>
             </div>
             <div>
-                <span class="font-medium">User Role</span><br>@Model.Role
+                <span class="font-medium">User Role</span><br />
+                @Model.Role
             </div>
             <div>
-                <span class="font-medium">Balance</span><br>@Model.Balance
+                <span class="font-medium">Balance</span><br />
+                @Model.Balance
             </div>
         </div>
     </div>
 </div>
 
-<!-- EDIT FORM (hidden by default) -->
+<!-- EDIT FORM -->
 <div id="editForm" class="max-w-4xl mt-10 mx-auto bg-white rounded-xl shadow-md p-10 hidden">
     <div class="flex justify-between items-start mb-6">
         <div>
@@ -60,27 +64,27 @@
         <button onclick="hideEditForm()" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
     </div>
 
-    <!-- FORM FIELDS (same như trên, giữ nguyên code form bạn đã viết) -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4  mb-4">
-        <div>
-            <label class="block text-sm font-medium text-gray-600 mb-1">Display Name</label>
-            <input type="text" class="w-full border rounded-md p-2" value="@Model.DisplayName">
+    <form method="post">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-600 mb-1">Display Name</label>
+                <input asp-for="@Model.DisplayName" class="w-full border rounded-md p-2" />
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-600 mb-1">Email Address</label>
+                <input asp-for="@Model.Email" type="email" class="w-full border rounded-md p-2" />
+            </div>
         </div>
-        <div>
-            <label class="block text-sm font-medium text-gray-600 mb-1">Email Address</label>
-            <input type="email" class="w-full border rounded-md p-2" value="@Model.Email">
-        </div>
-    </div>
 
-    <!-- Buttons -->
-    <div class="mt-8 flex justify-end space-x-2">
-        <button onclick="hideEditForm()" class="px-4 py-2 rounded-md border border-gray-300 text-gray-600 hover:bg-gray-100">Close</button>
-        <button class="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700">Save Changes</button>
-    </div>
+        <div class="mt-8 flex justify-end space-x-2">
+            <button type="button" onclick="hideEditForm()" class="px-4 py-2 rounded-md border border-gray-300 text-gray-600 hover:bg-gray-100">Close</button>
+            <button type="submit" class="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700">Save Changes</button>
+        </div>
+    </form>
 </div>
 
 <script>
-      function showEditForm() {
+    function showEditForm() {
         document.getElementById('informationForm').classList.add('hidden');
         document.getElementById('editForm').classList.remove('hidden');
         window.scrollTo({ top: document.getElementById('editForm').offsetTop - 60, behavior: 'smooth' });

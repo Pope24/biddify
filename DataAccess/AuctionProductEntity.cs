@@ -22,6 +22,7 @@ namespace DataAccess
         public DateTime EndTime { get; set; }
         public EAuctionStatus Status { get; set; } = EAuctionStatus.PendingApproval;
         public List<string> ImageUrls { get; set; } = new();
+        public WinningEntity? WinningDetails { get; set; }
 
         public ICollection<BidEntity> Bids { get; set; }
     }

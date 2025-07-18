@@ -1,96 +1,114 @@
-﻿@page
-@model Biddify.Pages.Profiles.Partial._HistoryAuctionModel
+﻿@model List<DataAccess.BidEntity>
+@using Common
+@using Domain.Enums
 @{
 }
 <div class="max-w-6xl mx-auto p-6">
     <div class="bg-white py-6 px-8 rounded-lg shadow mb-6 border border-gray-300">
-        <h2 class="text-2xl font-bold mb-6 text-uppercase">Auction history</h2>
+        <h2 class="text-2xl font-bold mb-6 text-uppercase">MY BIDDING HISTORY</h2>
 
-        <!-- Tabs -->
-        @* <div class="flex space-x-6 text-sm font-medium mb-6">
-            <a href="#" class="text-purple-600">All Order(50)</a>
-            <a href="#" class="text-gray-600">Pending(10)</a>
-            <a href="#" class="text-gray-600">Completed(8)</a>
-            <a href="#" class="text-gray-600">Cancelled(22)</a>
-        </div>
-        <div class="space-x-2">
-            <button class="border border-gray-300 rounded-full px-4 py-1 text-sm">View Invoice</button>
-            <button class="bg-purple-600 text-white rounded-full px-4 py-1 text-sm">View Order</button>
-        </div> *@
-        <!-- Header + Buttons -->
         <div class="flex justify-between items-center mb-4 text-gray-600 text-sm font-medium">
-            <div class="grid grid-cols-4 w-full">
-                <div>Item</div>
-                <div>Description</div>
-                <div>Total</div>
-                <div>Details</div>
+            <div class="grid grid-cols-5 w-full">
+                <div>Action product</div>
+                <div>Maximum price</div>
+                <div>Time bidding</div>
+                <div>Status auction</div>
+                <div>Detail</div>
             </div>
-         
         </div>
 
-        <!-- Order List -->
         <div class="space-y-6">
+            @if (Model == null || !Model.Any())
+            {
+                <p class="text-gray-500 text-center py-4">You have not participated in any auction yet.</p>
+            }
+            else
+            {
+                @foreach (var auctionGroup in Model.Where(b => b.AuctionProduct != null).GroupBy(b => b.AuctionProductId).OrderByDescending(g => g.Max(bid => bid.CreatedAt)))
+                {
+                    var firstBid = auctionGroup.First();
+                    var highestBidOfUser = auctionGroup.Max(b => b.Amount);
+                    var latestBidTimeOfUser = auctionGroup.Max(b => b.CreatedAt);
 
-            <!-- Order Item -->
-            <div class="grid grid-cols-4 items-center text-sm flex">
-                <div class="flex items-center space-x-4">
-                    <img src="https://media.wired.com/photos/61bd571ff6b645152a4dc4ad/master/pass/Evolution-Luxury-Watches-Oris.jpg" alt="book" class="w-14 h-14 rounded object-cover" />
-                    <div class="text-gray-500 text-xs"> x 1</div>
-                </div>
-                <div class="text-orange-500 font-medium">
-                    <div>
-                        <div class="font-medium">Adventure Story Book</div>
-                 
+                    <div class="grid grid-cols-5 items-center text-sm py-2">
+                        <div class="flex flex-col items-start space-y-2">
+                            @* Đổi từ items-center sang items-start và flex-col *@
+                            <div class="flex items-center space-x-4">
+                                @if (!string.IsNullOrEmpty(firstBid.AuctionProduct.ImageUrls[0]))
+                                {
+                                    <img src="@firstBid.AuctionProduct.ImageUrls[0]" alt="@firstBid.AuctionProduct.Title" class="w-14 h-14 rounded object-cover" />
+                                }
+                                else
+                                {
+                                    <img src="https://via.placeholder.com/56/cccccc/ffffff?text=No+Image" alt="No Image" class="w-14 h-14 rounded object-cover" />
+                                }
+                                <div class="font-medium text-orange-500">
+                                    <a href="/Auction/Details/@firstBid.AuctionProduct.Id">@firstBid.AuctionProduct.Title</a>
+                                </div>
+                            </div>
+                            <a href="/Auction/Details/@firstBid.AuctionProduct.Id" class=""></a>
+                        </div>
+                        <div class="font-semibold">
+                            $@highestBidOfUser.ToString("#,##0.00")
+                        </div>
+                        <div>
+                            @latestBidTimeOfUser.ToString("yyyy-MM-dd HH:mm:ss")
+                        </div>
+                        @{
+                            bool showPayButton = false;
+                            string statusClass = "text-gray-500";
+                            string displayStatus = EnumHelper.ToDisplayString(firstBid.AuctionProduct.Status);
+
+                            switch (firstBid.AuctionProduct.Status)
+                            {
+                                case EAuctionStatus.Active:
+                                    statusClass = "text-yellow-500";
+                                    break;
+                                case EAuctionStatus.Ended:
+                                    if (firstBid.AuctionProduct?.WinningDetails?.WinnerId == firstBid.BidderId)
+                                    {
+                                        statusClass = "text-green-500";
+                                        displayStatus += " (Winner)";
+                                        if (firstBid.AuctionProduct.WinningDetails != null && !firstBid.AuctionProduct.WinningDetails.IsPaid)
+                                        {
+                                            showPayButton = true;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        statusClass = "text-red-500";
+                                        displayStatus += " (Loser)";
+                                    }
+                                    break;
+                                case EAuctionStatus.Cancelled:
+                                    statusClass = "text-dark-500";
+                                    break;
+                            }
+                        }
+                        <div class="@statusClass font-medium">
+                            @displayStatus
+                        </div>
+                        <div class="flex flex-col items-start space-y-2">
+                            <button type="button"
+                                    class="text-xs px-4 py-1 rounded-full show-detail-panel-btn"
+                                    data-auction-product-id="@firstBid.AuctionProductId">
+                                Detail
+                            </button>
+
+                            @if (showPayButton)
+                            {
+                                <form method="post" asp-page-handler="RequestDeposit">
+                                    <button type="submit" class="border-0 bg-transparent">Pay now</button>
+                                    <input type="hidden" name="AuctionProductId" value="@firstBid.AuctionProduct.Id" />
+                                    <input type="hidden" name="DepositAmount" value="@firstBid.Amount" />
+                                    <input type="hidden" name="TransactionType" value="@EnumHelper.ToDisplayString(ETransactionType.Payment)" />
+                                </form>
+                            }
+                        </div>
                     </div>
-                </div>
-                <div class="font-semibold">$452.23</div>
-                <div>
-                    <button class="bg-purple-600 text-white text-xs px-4 py-1 rounded-full">Order Details</button>
-                </div>
-            </div>
-
-            <hr />
-
-            <!-- Order Item -->
-            <div class="grid grid-cols-4 items-center text-sm">
-                <div class="flex items-center space-x-4 flex">
-                    <img src="https://media.wired.com/photos/61bd571ff6b645152a4dc4ad/master/pass/Evolution-Luxury-Watches-Oris.jpg" alt="backpack" class="w-14 h-14 rounded object-cover" />
-                    <div class="text-gray-500 text-xs"> x 1</div>
-                </div>
-                <div class="text-green-500 font-medium">
-                    <div>
-                        <div class="font-medium">Travelling Backpack</div>
-                        
-                    </div>
-                </div>
-                <div class="font-semibold">$452.23</div>
-                <div>
-                    <button class="bg-purple-600 text-white text-xs px-4 py-1 rounded-full">Order Details</button>
-                </div>
-            </div>
-
-            <hr />
-
-            <!-- Order Item -->
-            <div class="grid grid-cols-4 items-center text-sm">
-                <div class="flex items-center space-x-4 flex">
-                    <img src="https://media.wired.com/photos/61bd571ff6b645152a4dc4ad/master/pass/Evolution-Luxury-Watches-Oris.jpg" alt="camera" class="w-14 h-14 rounded object-cover" />
-                    <div class="text-gray-500 text-xs"> x 1</div>
-               
-                </div>
-                <div class="text-green-500 font-medium">
-                    <div>
-                        <div class="font-medium">Mirrorless Cameras</div>
-                    
-                    </div>
-                </div>
-                <div class="font-semibold">$452.23</div>
-                <div>
-                    <button class="bg-purple-600 text-white text-xs px-4 py-1 rounded-full">Order Details</button>
-                </div>
-            </div>
+                    <hr />
+                }
+            }
         </div>
-    
-
     </div>
 </div>

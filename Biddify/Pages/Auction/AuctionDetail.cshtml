@@ -108,9 +108,9 @@
                         <p><span class="font-semibold">Category:</span> @EnumHelper.ToDisplayString(item.CategoryProduct)</p>
                         <p><span class="font-semibold">Minimum bid price:</span> $@item.MinBidPrice.ToString("#,##0.00")</p>
                         <p><span class="font-semibold">Status:</span> @EnumHelper.ToDisplayString(item.Status)</p>
-                        <p><span class="font-semibold">Start time:</span> @item.StartTime.ToString("MM/dd/yyyy HH:mm:ss")</p>
+                        <p><span class="font-semibold">Start time:</span> @DateTimeExtension.ConvertUtcToVNTime(item.StartTime).ToString("dd/MM/yyyy HH:mm:ss")</p>
                         <p><span class="font-semibold">Seller:</span> @item.Seller.DisplayName</p>
-                        <p><span class="font-semibold">End time:</span> @item.EndTime.ToString("MM/dd/yyyy HH:mm:ss")</p>
+                        <p><span class="font-semibold">End time:</span> @DateTimeExtension.ConvertUtcToVNTime(item.EndTime).ToString("dd/MM/yyyy HH:mm:ss")</p>
                     </div>
                 </div>
 
@@ -142,7 +142,8 @@
                                     <div>
                                         <p class="font-semibold">@bid.Bidder.DisplayName</p>
                                         <p class="text-gray-600">
-                                            @bid.CreatedAt.ToString("dd/MM/yyyy HH:mm:ss") -
+                                            @DateTimeExtension.ConvertUtcToVNTime(bid.CreatedAt).ToString("dd/MM/yyyy HH:mm:ss")
+                                            -
                                             <span class="font-semibold">$@bid.Amount.ToString("#,##0.00")</span>
                                         </p>
                                     </div>
@@ -285,6 +286,7 @@
 <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+<audio id="win-audio" src="/sounds/victory.mp3" preload="auto"></audio>
 <script>
     @* ChinhLV - SignalR listen add new bid event *@
     const connection = new signalR.HubConnectionBuilder()
@@ -411,7 +413,7 @@
             }
 
             const h = String(Math.floor(diff / 3_600_000)).padStart(2, '0');
-            const m = String(Math.floor((diff % 3_600_000) / 60_000)).padStart(2, '0');
+            const m = String(Math.floor((diff % 3_600_000) / 60_000)).padStart(2, '0');  
             const s = String(Math.floor((diff % 60_000) / 1_000)).padStart(2, '0');
             el.textContent = `${h} : ${m} : ${s}`;
         }
@@ -510,6 +512,19 @@
         });
         window.dispatchEvent(event);
     }
+    @* ChinhLV - Realtime winning *@
+        const auctionProductConnection = new signalR.HubConnectionBuilder()
+        .withUrl(`/AuctionProductHub?auctionId=${auctionId}`)
+        .build();
+
+    auctionProductConnection.on("AuctionEnded", (winnerName, productName) => {
+        const message = `Congratulations ${winnerName} for winning the auction for product ${productName}!`;
+        console.log(message);
+    });
+
+    auctionProductConnection.start()
+        .then(() => console.log("Connected to AuctionProductHub"))
+        .catch(err => console.error("AuctionProductHub error:", err));
 
 
 

@@ -168,6 +168,9 @@ namespace DataAccess.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<TransactionMetadata>("Metadata")
+                        .HasColumnType("jsonb");
+
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
@@ -293,7 +296,8 @@ namespace DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AuctionProductId");
+                    b.HasIndex("AuctionProductId")
+                        .IsUnique();
 
                     b.HasIndex("WinnerId");
 
@@ -514,8 +518,8 @@ namespace DataAccess.Migrations
             modelBuilder.Entity("DataAccess.WinningEntity", b =>
                 {
                     b.HasOne("DataAccess.AuctionProductEntity", "AuctionProduct")
-                        .WithMany()
-                        .HasForeignKey("AuctionProductId")
+                        .WithOne("WinningDetails")
+                        .HasForeignKey("DataAccess.WinningEntity", "AuctionProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -584,6 +588,8 @@ namespace DataAccess.Migrations
             modelBuilder.Entity("DataAccess.AuctionProductEntity", b =>
                 {
                     b.Navigation("Bids");
+
+                    b.Navigation("WinningDetails");
                 });
 #pragma warning restore 612, 618
         }

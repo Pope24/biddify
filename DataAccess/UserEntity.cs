@@ -7,8 +7,9 @@ namespace DataAccess
     {
         public string DisplayName { get; set; }
         public EUserStatus Status { get; set; } = EUserStatus.Inactive;
-        public ERole Role { get; set; }
+        public ERole Role { get; set; } 
         public decimal Balance { get; set; } = 0;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
     }
 }

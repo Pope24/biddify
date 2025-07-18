@@ -28,5 +28,14 @@ namespace Repository.Impl
         {
             return await _dbContext.Bids.Include(b => b.Bidder).FirstAsync(b => b.Id == id);
         }
+
+        public async Task<IEnumerable<BidEntity>> GetBidsByUserIdAsync(string userId)
+        {
+            return await _dbContext.Bids
+                .Where(b => b.BidderId == userId)
+                .Include(b => b.AuctionProduct)
+                .ThenInclude(ap => ap.WinningDetails)
+                .ToListAsync();
+        }
     }
 }

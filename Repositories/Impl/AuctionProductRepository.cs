@@ -44,6 +44,7 @@ namespace Repository.Impl
                 .Include(p => p.Seller)
                 .Include(p => p.Bids)
                 .ThenInclude(b => b.Bidder)
+                .Include(p => p.WinningDetails)
                 .FirstAsync();
         }
 
@@ -99,6 +100,18 @@ namespace Repository.Impl
             dbContext.AuctionProducts.Update(entity);
             var result = await dbContext.SaveChangesAsync();
             return result > 0;
+        }
+        public async Task<IEnumerable<AuctionProductEntity>> GetExpiredUnprocessedAuctionsAsync()
+        {
+            var now = DateTime.UtcNow;
+
+            return await dbContext.AuctionProducts
+                .Where(x => x.EndTime <= now
+                            && x.Status == EAuctionStatus.Active
+                            && !dbContext.Winnings.Any(w => w.AuctionProductId == x.Id))
+                .Include(x => x.Bids).ThenInclude(b => b.Bidder)
+                .Include(x => x.Seller)
+                .ToListAsync();
         }
     }
 }
