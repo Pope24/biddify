@@ -35,6 +35,8 @@ namespace Biddify.Pages.Profiles
         public decimal DepositAmount { get; set; }
         [BindProperty]
         public string TransactionType { get; set; }
+        [BindProperty]
+        public string? AuctionProductId { get; set; } = null;
 
         public async Task<IActionResult> OnGetAsync()
         {
@@ -73,7 +75,7 @@ namespace Biddify.Pages.Profiles
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return Page();
 
-            var checkoutUrl = await paymentService.CreatePaymentLinkOS(user.Id, null, TransactionType, DepositAmount, description, $"{request?.Scheme}://{request?.Host}/payment/response");
+            var checkoutUrl = await paymentService.CreatePaymentLinkOS(user.Id, AuctionProductId, TransactionType, DepositAmount, description, $"{request?.Scheme}://{request?.Host}/payment/response");
             return Redirect(checkoutUrl);
         }
         public async Task<PartialViewResult> OnGetAuctionDetailsAsync(string id)

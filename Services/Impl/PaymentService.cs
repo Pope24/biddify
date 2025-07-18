@@ -55,7 +55,7 @@ namespace Service.Impl
             var paymentData = new PaymentData(
                 orderCode: _orderCode,
                 amount: amountInVND,
-                description: $"{type}|{auctionProductId}",
+                description: $"{type}",
                 items: items,
                 cancelUrl: returnUrl,
                 returnUrl: returnUrl
