@@ -108,9 +108,9 @@
                         <p><span class="font-semibold">Category:</span> @EnumHelper.ToDisplayString(item.CategoryProduct)</p>
                         <p><span class="font-semibold">Minimum bid price:</span> $@item.MinBidPrice.ToString("#,##0.00")</p>
                         <p><span class="font-semibold">Status:</span> @EnumHelper.ToDisplayString(item.Status)</p>
-                        <p><span class="font-semibold">Start time:</span> @item.StartTime.ToString("MM/dd/yyyy HH:mm:ss")</p>
+                        <p><span class="font-semibold">Start time:</span> @DateTimeExtension.ConvertUtcToVNTime(item.StartTime).ToString("dd/MM/yyyy HH:mm:ss")</p>
                         <p><span class="font-semibold">Seller:</span> @item.Seller.DisplayName</p>
-                        <p><span class="font-semibold">End time:</span> @item.EndTime.ToString("MM/dd/yyyy HH:mm:ss")</p>
+                        <p><span class="font-semibold">End time:</span> @DateTimeExtension.ConvertUtcToVNTime(item.EndTime).ToString("dd/MM/yyyy HH:mm:ss")</p>
                     </div>
                 </div>
 
@@ -142,7 +142,8 @@
                                     <div>
                                         <p class="font-semibold">@bid.Bidder.DisplayName</p>
                                         <p class="text-gray-600">
-                                            @bid.CreatedAt.ToString("dd/MM/yyyy HH:mm:ss") -
+                                            @DateTimeExtension.ConvertUtcToVNTime(bid.CreatedAt).ToString("dd/MM/yyyy HH:mm:ss")
+                                            -
                                             <span class="font-semibold">$@bid.Amount.ToString("#,##0.00")</span>
                                         </p>
                                     </div>

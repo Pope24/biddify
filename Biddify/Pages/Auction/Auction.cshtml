@@ -1,5 +1,6 @@
 ﻿@page "/Auction"
 @model Biddify.Pages.Auction.AuctionModel
+@using Common
 @{
     ViewData["Title"] = "Auction";
     Layout = "~/Pages/Shared/_Layout.cshtml";
@@ -134,18 +135,17 @@
                             <p class="bid-value">$@item.StartPrice.ToString("#,##0.00")</p>
                             <p class="bid-label">Status: 
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium @GetStatusClasses(item.Status)">
-                                    @item.Status
+                                    @EnumHelper.ToDisplayString(item.Status)
                                 </span>
                             </p>
                             <p class="bid-label">Category: 
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                    @item.CategoryProduct
+                                    @EnumHelper.ToDisplayString(item.CategoryProduct)
                                 </span>
                             </p>
                         </div>
                         <div class="bid-timer">
                             <p id="@timerId" data-end="@endEpoch" class="timer-text">-- : -- : --</p>
-                            <p class="timer-label">Waiting For Bid</p>
                         </div>
                     </div>
 
@@ -268,36 +268,48 @@
 }
 
 <!-- Countdown JS -->
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        document.querySelectorAll('[data-end]').forEach(el => {
-            const endTime = Number(el.dataset.end);
-            startCountdown(endTime, el.id);
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('[data-end]').forEach(el => {
+                const endTime = Number(el.dataset.end);
+                startCountdown(endTime, el.id);
+            });
         });
-    });
 
-    function startCountdown(endTime, elementId) {
-        console.log(elementId);
-        function update() {
-            const now = Date.now();
-            const diff = endTime - now;
+        function startCountdown(endTime, elementId) {
+            let interval;
 
-            if (diff <= 0) {
-                document.getElementById(elementId).textContent = "00 : 00 : 00";
-                const label = document.getElementById(elementId).nextElementSibling;
-                if (label) {
-                    label.textContent = "Expired";
-                    label.classList.add("text-red-500", "font-semibold");
+            function update() {
+                const now = Date.now();
+                const diff = endTime - now;
+                if (diff <= 0) {
+                    const el = document.getElementById(elementId);
+                    if (el) {
+                        el.textContent = "00 : 00 : 00";
+                        const label = el.nextElementSibling;
+                        if (label) {
+                            label.textContent = "Expired";
+                            label.classList.add("text-red-500", "font-semibold");
+                        }
+                    }
+                    clearInterval(interval);
+                    return;
                 }
-                clearInterval(interval);
-                return;
+
+                const h = String(Math.floor(diff / 3_600_000)).padStart(2, '0');
+                const m = String(Math.floor((diff % 3_600_000) / 60_000)).padStart(2, '0');
+                const s = String(Math.floor((diff % 60_000) / 1_000)).padStart(2, '0');
+
+                const el = document.getElementById(elementId);
+                if (el) {
+                    el.textContent = `${h} : ${m} : ${s}`;
+                }
             }
-            const h = String(Math.floor(diff / 3_600_000)).padStart(2, '0');
-            const m = String(Math.floor(diff % 3_600_000 / 60_000)).padStart(2, '0');
-            const s = String(Math.floor(diff % 60_000 / 1_000)).padStart(2, '0');
-            document.getElementById(elementId).textContent = `${h} : ${m} : ${s}`;
+            interval = setInterval(update, 1000); 
+            update(); 
         }
-        update();
-        const interval = setInterval(update, 1000);
-    }
-</script>
+
+    </script>
+
+}

@@ -97,10 +97,12 @@
 
                             @if (showPayButton)
                             {
-                                <a href="/Payment/Pay?auctionProductId=@firstBid.AuctionProduct.Id"
-                                   class="text-xs px-4 py-1 rounded-full mt-1">
-                                    Pay Now
-                                </a>
+                                <form method="post" asp-page-handler="RequestDeposit">
+                                    <button type="submit" class="border-0 bg-transparent">Pay now</button>
+                                    <input type="hidden" name="AuctionProductId" value="@firstBid.AuctionProduct.Id" />
+                                    <input type="hidden" name="DepositAmount" value="@firstBid.Amount" />
+                                    <input type="hidden" name="TransactionType" value="@EnumHelper.ToDisplayString(ETransactionType.Payment)" />
+                                </form>
                             }
                         </div>
                     </div>
