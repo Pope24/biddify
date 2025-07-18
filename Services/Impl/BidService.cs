@@ -26,5 +26,10 @@ namespace Service.Impl
         {
             return await bidRepository.GetBidByIdAsync(id);
         }
+
+        public async Task<IEnumerable<BidEntity>> GetBidsByUserIdAsync(string userId)
+        {
+            return await bidRepository.GetBidsByUserIdAsync(userId);
+        }
     }
 }

@@ -11,5 +11,6 @@ namespace Repository
     {
         Task<bool> AddBidAsync(BidEntity entity);
         Task<BidEntity> GetBidByIdAsync(string id);
+        Task<IEnumerable<BidEntity>> GetBidsByUserIdAsync(string userId);
     }
 }

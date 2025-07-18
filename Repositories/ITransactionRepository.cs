@@ -11,5 +11,8 @@ namespace Repository
     {
         Task AddTransactionAsync(TransactionEntity entity);
         Task<bool> IsExistTransactionAsync(long orderCode);
+        Task<TransactionEntity> GetTransactionByCodeAsync(long code);
+        Task UpdateTransactionAsync(TransactionEntity entity);
+        Task<IEnumerable<TransactionEntity>> GetTransactionsByUserIdAsync(string userId, string? search = "");
     }
 }

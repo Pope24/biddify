@@ -11,7 +11,7 @@ namespace Domain.Enums
         Deposit,
         Withdraw,
         Payment,    
-        ReceivePayment 
+        ReceivePayment
     }
 
     public enum ETransactionStatus

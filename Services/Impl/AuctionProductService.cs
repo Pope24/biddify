@@ -1,4 +1,6 @@
-﻿using DataAccess;
+﻿using Common.Exceptions;
+using DataAccess;
+using Domain.Enums;
 using Repository;
 using System;
 using System.Collections.Generic;
@@ -22,14 +24,42 @@ namespace Service.Impl
             return auctionProductRepository.AddAuctionProductAsync(entity);
         }
 
-        public Task<AuctionProductEntity> GetAuctionProductByIdAsync(string id)
+        public async Task<AuctionProductEntity> GetAuctionProductByIdAsync(string id)
         {
-            return auctionProductRepository.GetAuctionProductByIdAsync(id);
+            id.ThrowIfNull("Auction product ID cannot be null");
+            
+            var auction = await auctionProductRepository.GetAuctionProductByIdAsync(id);
+            
+            // Still throw NotFound exception for individual item lookups
+            // This will trigger a proper 404 Not Found response
+            auction.ThrowIfNull($"Auction product with ID {id} not found");
+            
+            return auction;
         }
 
-        public Task<IEnumerable<AuctionProductEntity>> GetAuctionProductsAsync(string search = "")
+        public async Task<(IEnumerable<AuctionProductEntity> Items, int TotalCount)> GetAuctionProductsAsync(
+            string search = "", 
+            EAuctionStatus? status = null,
+            ECategoryProduct? category = null,
+            bool? isCurrent = null,
+            int pageNumber = 1,
+            int pageSize = 9)
         {
-            return auctionProductRepository.GetAuctionProductsAsync(search);
+            // Get all auctions with filters
+            var allAuctions = await auctionProductRepository.GetAuctionProductsAsync(search, status, category, isCurrent);
+            
+            // Ensure we have a non-null collection
+            var auctions = allAuctions ?? Enumerable.Empty<AuctionProductEntity>();
+            
+            // Calculate total count for pagination
+            int totalCount = auctions.Count();
+            
+            // Apply pagination
+            var paginatedAuctions = auctions
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize);
+                
+            return (paginatedAuctions, totalCount);
         }
 
         public Task<bool> UpdateAuctionProductAsync(AuctionProductEntity entity)
@@ -37,9 +67,13 @@ namespace Service.Impl
             return auctionProductRepository.UpdateAuctionProductAsync(entity);
         }
 
-        public Task<bool> DeleteAuctionProductAsync(string id)
+        public Task<bool> DeleteAuctionProductAsync(string id)  
         {
             return auctionProductRepository.DeleteAuctionProductAsync(id);
+        }
+        public async Task<IEnumerable<AuctionProductEntity>> GetExpiredUnprocessedAuctionsAsync()
+        {
+            return await auctionProductRepository.GetExpiredUnprocessedAuctionsAsync();
         }
     }
 }

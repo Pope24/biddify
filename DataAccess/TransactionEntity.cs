@@ -19,5 +19,10 @@ namespace DataAccess
         public ETransactionStatus Status { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public TransactionMetadata? Metadata { get; set; }
+    }
+    public class TransactionMetadata
+    {
+        public string? AuctionProductId { get; set; }
     }
 }
